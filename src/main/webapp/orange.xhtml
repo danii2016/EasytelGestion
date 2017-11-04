@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <body>
+
+        <ui:composition template="./template/Template.xhtml">
+
+            <ui:define name="content">
+                <div class = "container" id = "uploadForm">
+                    <h:form enctype="multipart/form-data" style="width:100%">
+                        <p:growl id="message_upload" showDetail="true" />
+                        <p:fileUpload value="#{fileUploadBean.file}" oncomplete="postExecuteUpload()" update="message_upload" mode="advanced" allowTypes="/(\.|\/)(xlsx?)$/" fileUploadListener="#{fileUploadBean.fileUploadListener}">
+                        </p:fileUpload>
+                    </h:form>
+                </div>
+                <div class = "container" id = "uploadData" style="display: none">
+                    <h:form>
+                        <p:remoteCommand name="rc" update="tableauDivParent" actionListener="#{fileUploadBean.readFile}" />
+
+                        <p:growl id="msgs" showDetail="true" />
+                        <p:commandButton type="button" onclick="rc()" class ="showData" value="Afficher" icon="ui-icon-refresh" style="opacity: 0" />
+                        <h:panelGroup id="tableauDivParent" layout="block">
+                            <h:panelGroup id="tableauDiv" rendered="#{fileUploadBean.lu}" layout="block">
+                                <ui:include src="tableauExcel.xhtml">
+
+                                </ui:include>
+                              </h:panelGroup>
+                        </h:panelGroup>
+                    </h:form>
+                </div>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

@@ -1,0 +1,17 @@
+/home/andri/NetBeansProjects/EasytelGestion/src/main/java/com/easytel/dao/LoginDAO.java
+/home/andri/NetBeansProjects/EasytelGestion/src/main/java/com/easytel/model/Cash_in.java
+/home/andri/NetBeansProjects/EasytelGestion/src/main/java/com/easytel/model/Cash_out.java
+/home/andri/NetBeansProjects/EasytelGestion/src/main/java/com/easytel/model/Fichier.java
+/home/andri/NetBeansProjects/EasytelGestion/src/main/java/com/easytel/model/Agent.java
+/home/andri/NetBeansProjects/EasytelGestion/src/main/java/com/easytel/dao/AgentDAO.java
+/home/andri/NetBeansProjects/EasytelGestion/src/main/java/com/easytel/model/Appro_caisse.java
+/home/andri/NetBeansProjects/EasytelGestion/src/main/java/com/easytel/filter/AuthorizationFilter.java
+/home/andri/NetBeansProjects/EasytelGestion/src/main/java/com/easytel/model/LigneTableau.java
+/home/andri/NetBeansProjects/EasytelGestion/src/main/java/com/easytel/model/C2c_transfert.java
+/home/andri/NetBeansProjects/EasytelGestion/src/main/java/com/easytel/beans/UserBean.java
+/home/andri/NetBeansProjects/EasytelGestion/src/main/java/com/easytel/beans/FileUploadBean.java
+/home/andri/NetBeansProjects/EasytelGestion/src/main/java/com/easytel/beans/AgentBean.java
+/home/andri/NetBeansProjects/EasytelGestion/src/main/java/com/easytel/util/SessionUtils.java
+/home/andri/NetBeansProjects/EasytelGestion/src/main/java/com/easytel/beans/ChartView.java
+/home/andri/NetBeansProjects/EasytelGestion/src/main/java/com/easytel/util/dataConnect.java
+/home/andri/NetBeansProjects/EasytelGestion/src/main/java/com/easytel/model/Caisse_journalier.java

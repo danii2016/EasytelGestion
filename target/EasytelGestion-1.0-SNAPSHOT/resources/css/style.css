@@ -1,0 +1,58 @@
+body{
+    background-color: #541953;
+}
+#head-band, #head-band div {
+    background: #541953;
+    color: #fff;
+}
+#head-band h3#title-head {
+    font-size: 50px;
+    font-weight: bold;
+}
+#footer, #footer div {
+    background: #541953;
+    color: #fff;
+}
+body div{
+    background: #541953
+}
+#wrapper-content div{
+    background: #fff
+}
+.ui-menu .ui-menuitem-link {
+    background: #fff;
+}
+#head-band .ui-layout-unit-content {
+    overflow: hidden;
+}
+#content, #content div {
+    background: #e2e2e2;
+}
+#formulaire-authentification, #formulaire-authentification div {
+    background: #fff;
+}
+#form-container {
+    width: 400px;
+    margin-left: 35%;
+    margin-top: 10%;
+}
+#form-container h3 {
+    text-align: center;
+    color: #34344d;
+    margin-bottom: 30px;
+    font-weight: bolder;
+}
+#content div#tableau-excel-container {
+    background: #fff;
+    width: 105%;
+    overflow-x: auto;
+}
+#title-tableau-excel {
+    text-align: center
+}
+#content-add-agent input {
+    margin-bottom: 10px;
+}
+.container .btn-group .btn {
+    margin: 5px;
+}

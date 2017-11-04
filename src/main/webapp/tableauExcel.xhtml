@@ -1,0 +1,75 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:body>
+        <h2 id = "title-tableau-excel">Relevé de vos opérations</h2>
+        <div id = "tableau-excel-container">
+            <h:dataTable class ="table table-bordered" value="#{fileUploadBean.lignes}" var="ligneTableau" border="2">
+                <h:column>
+                        <f:facet name="header">A</f:facet>
+                    #{ligneTableau.val1}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">B</f:facet>
+                    #{ligneTableau.val2}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">C</f:facet>
+                    #{ligneTableau.val3}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">D</f:facet>
+                    #{ligneTableau.val4}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">E</f:facet>
+                    #{ligneTableau.val5}
+                </h:column>
+                <h:column>
+                        <f:facet name="header">F</f:facet>
+                    #{ligneTableau.val6}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">G</f:facet>
+                    #{ligneTableau.val7}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">H</f:facet>
+                    #{ligneTableau.val8}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">I</f:facet>
+                    #{ligneTableau.val9}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">J</f:facet>
+                    #{ligneTableau.val10}
+                </h:column>
+                <h:column>
+                        <f:facet name="header">K</f:facet>
+                    #{ligneTableau.val11}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">L</f:facet>
+                    #{ligneTableau.val12}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">M</f:facet>
+                    #{ligneTableau.val13}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">N</f:facet>
+                    #{ligneTableau.val14}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">O</f:facet>
+                    #{ligneTableau.val15}
+                </h:column>
+            </h:dataTable>
+        </div>
+    </h:body>
+</html>

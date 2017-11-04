@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions" 
+      xmlns:pm="http://primefaces.org/mobile">
+
+    <body>
+
+        <ui:composition template="./template/Template.xhtml">
+
+            <ui:define name="content">
+                <div class="container">
+                    <h:form id="form">
+                        <p:dataTable id="agents" var="agent" value="#{agentBean.agents}" rowKey="#{agent.ag_id}"
+                                     selection="#{agentBean.currAgent}" selectionMode="single">
+                            <f:facet name="header">
+                                Liste des agents orange money
+                                <span class = "pull-right btn btn-primary" onclick="PF('dlg2').show();"><i class="glyphicon glyphicon-plus"></i> Ajouter </span>
+                            </f:facet>
+                            <p:column headerText="Id">
+                                <h:outputText value="#{agent.ag_id}" />
+                            </p:column>
+                            <p:column headerText="Nom">
+                                <h:outputText value="#{agent.ag_nom}" />
+                            </p:column>
+                            <p:column headerText="Numéro">
+                                <h:outputText value="#{agent.ag_numero}" />
+                            </p:column>
+                            <p:column headerText="Adresse">
+                                <h:outputText value="#{agent.ag_adresse}" />
+                            </p:column>
+                        </p:dataTable> 
+
+                        <p:contextMenu for="agents">
+                            <p:menuitem value="Afficher/Editer" update="agentDetail" icon="ui-icon-search" oncomplete="PF('agentDialog').show()"/>
+                            <p:menuitem value="Supprimer" update="agents" icon="ui-icon-close" actionListener="#{agentBean.supprimerAgent}"/>
+                        </p:contextMenu>
+
+                        <p:dialog header="Informations sur l'agent" widgetVar="agentDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+                            <p:outputPanel id="agentDetail" style="text-align:center;">
+                                <p:panelGrid  columns="2" rendered="#{not empty agentBean.currAgent}" columnClasses="label,value">
+                                    <h:outputText value="Id" />
+                                    <h:inputText value="#{agentBean.currAgent.ag_id}" />
+
+                                    <h:outputText value="Nom" />
+                                    <h:inputText value="#{agentBean.currAgent.ag_nom}" />
+
+                                    <h:outputText value="Numéro" />
+                                    <h:inputText value="#{agentBean.currAgent.ag_numero}"/>
+
+                                    <h:outputText value="Adresse" />
+                                    <h:inputText value="$#{agentBean.currAgent.ag_adresse}" />
+                                    
+                                    <h:outputText value="UV initial" />
+                                    <h:inputText value="#{agentBean.currAgent.ag_uvinitial}"/>
+
+                                    <h:outputText value="Caisse initale" />
+                                    <h:inputText value="$#{agentBean.currAgent.ag_caisseinitial}" />
+                                </p:panelGrid>
+                            </p:outputPanel>
+                        </p:dialog>
+                        
+                        <p:dialog header="Modal Dialog" widgetVar="dlg2" modal="true" width="500" height="250">
+                            <div id ="content-add-agent" class="container row row-fluid" style="width: 100%;">
+                            <pm:field class="form-group">
+                                <p:outputLabel class="col-md-4" for="inputNom" value="Nom" />
+                                <p:inputText id="inputNom" class="col-md-8" />
+                            </pm:field>
+                            <pm:field class="form-group">
+                                <p:outputLabel class="col-md-4" for="inputAdresse" value="Adresse" />
+                                <p:inputText id="inputAdresse" class="col-md-8" />
+                            </pm:field>
+                            <pm:field class="form-group">
+                                <p:outputLabel class="col-md-4" for="inputNumero" value="Numéro" />
+                                <p:inputText id="inputNumero" class="col-md-8" placeholder ="0320011122" />
+                            </pm:field>
+                            <pm:field class="form-group">
+                                <p:outputLabel class="col-md-4" for="inputUV" value="UV initial" />
+                                <pe:inputNumber class="col-md-8" id="inputUV" symbol=" AR" symbolPosition="s" 
+                               decimalSeparator="," thousandSeparator="."/>
+                            </pm:field>
+                            <pm:field class="form-group">
+                                <p:outputLabel class="col-md-4" for="inputCaisse" value="Caisse" />
+                                <pe:inputNumber class="col-md-8" id="inputCaisse" symbol=" AR" symbolPosition="s" 
+                               decimalSeparator="," thousandSeparator="." />
+                            </pm:field>
+                            </div>
+                            <div class="container" style="width: 100%;">
+                                <div class="btn-group pull-right">
+                                    <button class="btn btn-danger" onclick="PF('dlg2').hide();">Annuler</button>
+                                    <button class="btn btn-primary" onclick="">Valider</button>
+                                </div>
+                            </div>
+                        </p:dialog> 
+                    </h:form>
+                </div>  
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>
