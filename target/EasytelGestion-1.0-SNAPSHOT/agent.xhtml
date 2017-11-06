@@ -64,40 +64,52 @@
                             </p:outputPanel>
                         </p:dialog>
                         
-                        <p:dialog header="Modal Dialog" widgetVar="dlg2" modal="true" width="500" height="250">
-                            <div id ="content-add-agent" class="container row row-fluid" style="width: 100%;">
-                            <pm:field class="form-group">
-                                <p:outputLabel class="col-md-4" for="inputNom" value="Nom" />
-                                <p:inputText id="inputNom" class="col-md-8" />
-                            </pm:field>
-                            <pm:field class="form-group">
-                                <p:outputLabel class="col-md-4" for="inputAdresse" value="Adresse" />
-                                <p:inputText id="inputAdresse" class="col-md-8" />
-                            </pm:field>
-                            <pm:field class="form-group">
-                                <p:outputLabel class="col-md-4" for="inputNumero" value="Numéro" />
-                                <p:inputText id="inputNumero" class="col-md-8" placeholder ="0320011122" />
-                            </pm:field>
-                            <pm:field class="form-group">
-                                <p:outputLabel class="col-md-4" for="inputUV" value="UV initial" />
-                                <pe:inputNumber class="col-md-8" id="inputUV" symbol=" AR" symbolPosition="s" 
-                               decimalSeparator="," thousandSeparator="."/>
-                            </pm:field>
-                            <pm:field class="form-group">
-                                <p:outputLabel class="col-md-4" for="inputCaisse" value="Caisse" />
-                                <pe:inputNumber class="col-md-8" id="inputCaisse" symbol=" AR" symbolPosition="s" 
-                               decimalSeparator="," thousandSeparator="." />
-                            </pm:field>
-                            </div>
-                            <div class="container" style="width: 100%;">
-                                <div class="btn-group pull-right">
-                                    <button class="btn btn-danger" onclick="PF('dlg2').hide();">Annuler</button>
-                                    <button class="btn btn-primary" onclick="">Valider</button>
+                        <p:dialog header="Ajouter agent" widgetVar="dlg2" modal="true" width="500" height="300">
+                            <h:form id = "form_ajout">
+                                <p:messages id="msgs" autoUpdate="true" closable="true"/>
+                                <div id ="content-add-agent" class="container row row-fluid" style="width: 100%;">
+                                <div class="form-group">
+                                    <p:message for="inputNom" id="msgNom" display="icon" />
+                                    <p:outputLabel class="col-md-4" for="inputNom" value="Nom" />
+                                    <p:inputText id="inputNom" class="col-md-8" value = "#{agentBean.nom_agent}" required="true" >
+                                        <f:validator validatorId="com.easytel.filter.NomAgentValidator" />
+                                        <p:ajax update="msgNom" event="keyup" />
+                                    </p:inputText>
                                 </div>
-                            </div>
-                        </p:dialog> 
+                                <div class="form-group">
+                                    <p:outputLabel class="col-md-4" for="inputAdresse" value="Adresse" />
+                                    <p:inputText id="inputAdresse" class="col-md-8" value = "#{agentBean.adresse_agent}" required="false" />
+                                </div>
+                                <div class="form-group">
+                                    <p:outputLabel class="col-md-4" for="inputNumero" value="Numéro" />
+                                    <p:message for="inputNumero" id="msgNumero" display="icon" />
+                                    <p:inputText id="inputNumero" class="col-md-8" placeholder ="0320011122" value="#{agentBean.numero_agent}" required="true" >
+                                        <f:validator validatorId="com.easytel.filter.NumeroAgentValidator" />
+                                        <p:ajax update="msgNumero" event="keyup" />
+                                    </p:inputText>
+                                    
+                                </div>
+                                <div class="form-group">
+                                    <p:outputLabel class="col-md-4" for="inputUV" value="UV initial" />
+                                    <pe:inputNumber class="col-md-8" id="inputUV" symbol=" AR" symbolPosition="s" 
+                                                    decimalSeparator="," thousandSeparator="." value = "#{agentBean.uv_agent}" required="true"/>
+                                </div>
+                                <div class="form-group">
+                                    <p:outputLabel class="col-md-4" for="inputCaisse" value="Caisse" />
+                                    <pe:inputNumber class="col-md-8" id="inputCaisse" symbol=" AR" symbolPosition="s" 
+                                                    decimalSeparator="," thousandSeparator="." value="#{agentBean.caisse_agent}" required="true" />
+                                </div>
+                                </div>
+                                <div class="container" style="width: 100%;">
+                                    <div class="btn-group pull-right">
+                                        <button class="btn btn-danger" onclick="PF('dlg2').hide();">Annuler</button>
+                                        <p:commandButton class ="btn btn-primary" value="Enregistrer" update="@form:msgs" actionListener="#{agentBean.addnew}" icon="ui-icon-check" />
+                                    </div>
+                                </div>
+                                </h:form>
+                            </p:dialog> 
                     </h:form>
-                </div>  
+                </div>             
             </ui:define>
 
         </ui:composition>

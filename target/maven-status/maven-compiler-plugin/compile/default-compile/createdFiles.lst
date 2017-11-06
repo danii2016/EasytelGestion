@@ -13,5 +13,5 @@ com/easytel/model/Cash_out.class
 com/easytel/model/Appro_caisse.class
 com/easytel/util/SessionUtils.class
 com/easytel/model/LigneTableau.class
-com/easytel/model/Caisse_journalier.class
 com/easytel/beans/ChartView.class
+com/easytel/model/Caisse_journalier.class

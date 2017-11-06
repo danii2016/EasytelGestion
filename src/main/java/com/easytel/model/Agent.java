@@ -10,12 +10,17 @@ package com.easytel.model;
  * @author andri
  */
 public class Agent {
-    private int ag_id;
+    public int ag_id;
     private String ag_nom;
     private String ag_numero;
     private String ag_adresse;
     private double ag_uvinitial;
     private double ag_caisseinitial;
+
+    public Agent() {
+        this.ag_id = 0;
+        this.ag_adresse = "";
+    }
 
     public String getAg_adresse() {
         return ag_adresse;

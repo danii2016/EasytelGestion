@@ -56,3 +56,11 @@ body div{
 .container .btn-group .btn {
     margin: 5px;
 }
+#content-add-agent .form-group {
+    position: relative
+}
+#content-add-agent .ui-message-error-icon {
+    position: absolute;
+    right: -20px;
+    right: 10px;
+}
