@@ -19,6 +19,9 @@
                             <f:ajax render="@form"/>
                         </h:commandButton>
                         <p:dataTable id="agents" var="agent" value="#{agentBean.agents}" rowKey="#{agent.ag_id}"
+                                     paginator="true"
+                                    paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                    rowsPerPageTemplate="10,20,50"
                                      selection="#{agentBean.currAgent}" selectionMode="single">
                             <f:facet name="header">
                                 Liste des agents orange money
@@ -48,19 +51,20 @@
                                 <p:panelGrid  columns="3" rendered="#{not empty agentBean.currAgent}" columnClasses="label,value">
                                     <p:outputLabel class="" for="inputIdEdit" value="Id" />
                                     <h:inputText disabled = "disabled" id ="inputIdEdit" value="#{agentBean.currAgent.ag_id}" >
-                                        <p:ajax update="inputNomEdit" event="change" />
+                                        <p:ajax update="msgIdEdit" event="change" />
                                     </h:inputText>
                                     <p:message for="inputIdEdit" id="msgIdEdit" display="icon" />
 
                                     <p:outputLabel class="" for="inputNomEdit" value="Nom" />
                                     <h:inputText id ="inputNomEdit" value="#{agentBean.currAgent.ag_nom}" >
-                                        <p:ajax update="inputNomEdit" event="change" />
+                                        <p:ajax update="msgNomEdit" event="change" />
                                     </h:inputText>
                                     <p:message for="inputNomEdit" id="msgNomEdit" display="icon" />
 
                                     <p:outputLabel class="" for="inputNumeroEdit" value="Numéro" />
                                     <h:inputText id="inputNumeroEdit" value="#{agentBean.currAgent.ag_numero}">
-                                        <p:ajax update="inputNomEdit" event="change" />
+                                        <f:validator validatorId="com.easytel.filter.SimpleNumeroValidator" />
+                                        <p:ajax update="msgNumeroEdit" event="blur" />
                                     </h:inputText>
                                     <p:message for="inputNumeroEdit" id="msgNumeroEdit" display="icon" />
 

@@ -86,3 +86,12 @@ body div{
 .btn-group.btn-import button {
     margin-left: 10px;
 }
+#infosImport, #erreurImport {
+    width: 105%;
+}
+#content #infosImport div {
+    background: #c3e6f8;
+}
+#content #erreurImport div {
+    background: #e4b9b9;
+}
