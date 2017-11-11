@@ -15,6 +15,9 @@
             <ui:define name="content">
                 <div class="container">
                     <h:form id="form">
+                        <h:commandButton style="display:none" id="refreshAgents" >
+                            <f:ajax render="@form"/>
+                        </h:commandButton>
                         <p:dataTable id="agents" var="agent" value="#{agentBean.agents}" rowKey="#{agent.ag_id}"
                                      selection="#{agentBean.currAgent}" selectionMode="single">
                             <f:facet name="header">
@@ -37,79 +40,124 @@
 
                         <p:contextMenu for="agents">
                             <p:menuitem value="Afficher/Editer" update="agentDetail" icon="ui-icon-search" oncomplete="PF('agentDialog').show()"/>
-                            <p:menuitem value="Supprimer" update="agents" icon="ui-icon-close" actionListener="#{agentBean.supprimerAgent}"/>
+                            <p:menuitem value="Supprimer" icon="ui-icon-close" onclick = "PF('confirmSuppAgent').show()" />
                         </p:contextMenu>
 
                         <p:dialog header="Informations sur l'agent" widgetVar="agentDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
                             <p:outputPanel id="agentDetail" style="text-align:center;">
-                                <p:panelGrid  columns="2" rendered="#{not empty agentBean.currAgent}" columnClasses="label,value">
-                                    <h:outputText value="Id" />
-                                    <h:inputText value="#{agentBean.currAgent.ag_id}" />
+                                <p:panelGrid  columns="3" rendered="#{not empty agentBean.currAgent}" columnClasses="label,value">
+                                    <p:outputLabel class="" for="inputIdEdit" value="Id" />
+                                    <h:inputText disabled = "disabled" id ="inputIdEdit" value="#{agentBean.currAgent.ag_id}" >
+                                        <p:ajax update="inputNomEdit" event="change" />
+                                    </h:inputText>
+                                    <p:message for="inputIdEdit" id="msgIdEdit" display="icon" />
 
-                                    <h:outputText value="Nom" />
-                                    <h:inputText value="#{agentBean.currAgent.ag_nom}" />
+                                    <p:outputLabel class="" for="inputNomEdit" value="Nom" />
+                                    <h:inputText id ="inputNomEdit" value="#{agentBean.currAgent.ag_nom}" >
+                                        <p:ajax update="inputNomEdit" event="change" />
+                                    </h:inputText>
+                                    <p:message for="inputNomEdit" id="msgNomEdit" display="icon" />
 
-                                    <h:outputText value="Numéro" />
-                                    <h:inputText value="#{agentBean.currAgent.ag_numero}"/>
+                                    <p:outputLabel class="" for="inputNumeroEdit" value="Numéro" />
+                                    <h:inputText id="inputNumeroEdit" value="#{agentBean.currAgent.ag_numero}">
+                                        <p:ajax update="inputNomEdit" event="change" />
+                                    </h:inputText>
+                                    <p:message for="inputNumeroEdit" id="msgNumeroEdit" display="icon" />
 
-                                    <h:outputText value="Adresse" />
-                                    <h:inputText value="$#{agentBean.currAgent.ag_adresse}" />
+                                    <p:outputLabel class="" for="inputAdresseEdit" value="Adresse" />
+                                    <h:inputText id = "inputAdresseEdit" value="#{agentBean.currAgent.ag_adresse}" >
+                                        <p:ajax update="inputNomEdit" event="change" />
+                                    </h:inputText>
+                                    <p:message for="inputAdresseEdit" id="msgAdresseEdit" display="icon" />
                                     
-                                    <h:outputText value="UV initial" />
-                                    <h:inputText value="#{agentBean.currAgent.ag_uvinitial}"/>
+                                    <p:outputLabel class="" for="inputUVEdit" value="UV initial" />
+                                    <pe:inputNumber class="" id="inputUVEdit" symbol=" AR" symbolPosition="s" 
+                                                    decimalSeparator="," thousandSeparator="." value = "#{agentBean.currAgent.ag_uvinitial}" required="true">
+                                        <f:validateLength minimum="6" />
+                                        <p:ajax update="msgUVEdit" event="blur" />
+                                    </pe:inputNumber>
+                                    <p:message for="inputUVEdit" id="msgUVEdit" display="icon" />
 
-                                    <h:outputText value="Caisse initale" />
-                                    <h:inputText value="$#{agentBean.currAgent.ag_caisseinitial}" />
+                                    <p:outputLabel class="" for="inputCaisseEdit" value="Caisse initale" />
+                                    <pe:inputNumber class="" id="inputCaisseEdit" symbol=" AR" symbolPosition="s" 
+                                                    decimalSeparator="," thousandSeparator="." value = "#{agentBean.currAgent.ag_caisseinitial}" required="true">
+                                        <f:validateLength minimum="6" />
+                                        <p:ajax update="msgCaisseEdit" event="blur" />
+                                    </pe:inputNumber>
+                                    <p:message for="inputCaisseEdit" id="msgCaisseEdit" display="icon" />
                                 </p:panelGrid>
+                                <div class="container" style="width: 100%;">
+                                    <div class="btn-group pull-right">
+                                        <p:commandButton class ="btn btn-primary" value="Enregistrer" update="@form" actionListener="#{agentBean.saveCurrent}" icon="ui-icon-check" oncomplete="PF('agentDialog').hide();" />
+                                    </div>
+                                </div>
                             </p:outputPanel>
                         </p:dialog>
-                        
-                        <p:dialog header="Ajouter agent" widgetVar="dlg2" modal="true" width="500" height="300">
+                         <p:confirmDialog message="Vous êtes sur de suprimer cet agent?" 
+                                            showEffect="fade"
+                                            hideEffect="explode" 
+                                            widgetVar="confirmSuppAgent">
+                               <p:commandButton title="NePasSupprimer" 
+                                                value="Non" 
+                                                oncomplete="PF('confirmSuppAgent').hide()"/>
+                               <p:commandButton title="Supprimer" 
+                                                value="Oui" 
+                                                action="#{agentBean.supprimerAgent()}" 
+                                                oncomplete="PF('confirmSuppAgent').hide(); $('#refreshAgents').click();" 
+                                                update="agents"/>
+                        </p:confirmDialog>
+                    </h:form>
+                   
+                </div>            
+                <p:dialog header="Ajouter agent" widgetVar="dlg2" modal="true" width="500" height="300">
                             <h:form id = "form_ajout">
                                 <p:messages id="msgs" autoUpdate="true" closable="true"/>
-                                <div id ="content-add-agent" class="container row row-fluid" style="width: 100%;">
-                                <div class="form-group">
-                                    <p:message for="inputNom" id="msgNom" display="icon" />
-                                    <p:outputLabel class="col-md-4" for="inputNom" value="Nom" />
-                                    <p:inputText id="inputNom" class="col-md-8" value = "#{agentBean.nom_agent}" required="true" >
+                                <div id = "content-add-agent">
+                                <p:panelGrid columns="3">
+                                    <p:outputLabel class="" for="inputNom" value="Nom" />
+                                    <p:inputText id="inputNom" class="" value = "#{agentBean.nom_agent}" required="true" >
                                         <f:validator validatorId="com.easytel.filter.NomAgentValidator" />
-                                        <p:ajax update="msgNom" event="keyup" />
+                                        <p:ajax update="msgNom" event="blur" />
                                     </p:inputText>
-                                </div>
-                                <div class="form-group">
-                                    <p:outputLabel class="col-md-4" for="inputAdresse" value="Adresse" />
-                                    <p:inputText id="inputAdresse" class="col-md-8" value = "#{agentBean.adresse_agent}" required="false" />
-                                </div>
-                                <div class="form-group">
-                                    <p:outputLabel class="col-md-4" for="inputNumero" value="Numéro" />
-                                    <p:message for="inputNumero" id="msgNumero" display="icon" />
-                                    <p:inputText id="inputNumero" class="col-md-8" placeholder ="0320011122" value="#{agentBean.numero_agent}" required="true" >
+                                    <p:message for="inputNom" id="msgNom" display="icon" />
+                                
+                                    <p:outputLabel class="" for="inputAdresse" value="Adresse" />
+                                    <p:inputText id="inputAdresse" class="" value = "#{agentBean.adresse_agent}" required="false" />
+                                    <p:message for="inputAdresse" id="msgAdresse" display="icon" />
+                                
+                                    <p:outputLabel class="" for="inputNumero" value="Numéro" />
+                                    <p:inputText id="inputNumero" class="" placeholder ="0320011122" value="#{agentBean.numero_agent}" required="true" >
                                         <f:validator validatorId="com.easytel.filter.NumeroAgentValidator" />
-                                        <p:ajax update="msgNumero" event="keyup" />
+                                        <p:ajax update="msgNumero" event="blur" />
                                     </p:inputText>
+                                    <p:message for="inputNumero" id="msgNumero" display="icon" />
                                     
-                                </div>
-                                <div class="form-group">
-                                    <p:outputLabel class="col-md-4" for="inputUV" value="UV initial" />
-                                    <pe:inputNumber class="col-md-8" id="inputUV" symbol=" AR" symbolPosition="s" 
-                                                    decimalSeparator="," thousandSeparator="." value = "#{agentBean.uv_agent}" required="true"/>
-                                </div>
-                                <div class="form-group">
-                                    <p:outputLabel class="col-md-4" for="inputCaisse" value="Caisse" />
-                                    <pe:inputNumber class="col-md-8" id="inputCaisse" symbol=" AR" symbolPosition="s" 
-                                                    decimalSeparator="," thousandSeparator="." value="#{agentBean.caisse_agent}" required="true" />
-                                </div>
+                                    <p:outputLabel class="" for="inputUV" value="UV initial" />
+                                    <pe:inputNumber class="" id="inputUV" symbol=" AR" symbolPosition="s" 
+                                                    decimalSeparator="," thousandSeparator="." value = "#{agentBean.uv_agent}" required="true">
+                                        <f:validateLength minimum="6" />
+                                        <p:ajax update="msgUV" event="blur" />
+                                    </pe:inputNumber>
+                                    <p:message for="inputUV" id="msgUV" display="icon" />
+                                
+                                    <p:outputLabel class="" for="inputCaisse" value="Caisse" />
+                                    <pe:inputNumber class="" id="inputCaisse" symbol=" AR" symbolPosition="s" 
+                                                    decimalSeparator="," thousandSeparator="." value="#{agentBean.caisse_agent}" required="true" >
+                                        <f:validateLength minimum="6" />
+                                        <p:ajax update="msgCaisse" event="blur" />
+                                    </pe:inputNumber>
+                                    <p:message for="inputCaisse" id="msgCaisse" display="icon" />
+
+                                </p:panelGrid>
                                 </div>
                                 <div class="container" style="width: 100%;">
                                     <div class="btn-group pull-right">
                                         <button class="btn btn-danger" onclick="PF('dlg2').hide();">Annuler</button>
-                                        <p:commandButton class ="btn btn-primary" value="Enregistrer" update="@form:msgs" actionListener="#{agentBean.addnew}" icon="ui-icon-check" />
+                                        <p:commandButton class ="btn btn-primary" value="Enregistrer" update="@form:msgs" actionListener="#{agentBean.addnew}" icon="ui-icon-check" oncomplete="if($('.ui-messages-error-summary').first().html() == '') { PF('dlg2').hide(); window.location.reload(); }" />
                                     </div>
                                 </div>
                                 </h:form>
                             </p:dialog> 
-                    </h:form>
-                </div>             
             </ui:define>
 
         </ui:composition>

@@ -6,8 +6,54 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:p="http://primefaces.org/ui">
     <h:body>
-        <h2 id = "title-tableau-excel">Relevé de vos opérations</h2>
-        <div id = "tableau-excel-container">
+        <h:panelGroup rendered="#{fileUploadBean.valid == -1}">
+            <div class = "btn-group btn-import" style="width: 100%">
+                <span class="btn btn-danger pull-right"  onclick="cancelImport()"> Retour</span>
+            </div>
+            <div class = "alert alert-danger">
+                Il semble que le fichier uploadé n'est pas un fichier correct. Vérifiez le contenu de votre fichier!
+            </div>
+        </h:panelGroup>
+        <h:panelGroup rendered="#{fileUploadBean.valid == -2}">
+            <div class = "btn-group btn-import" style="width: 100%">
+                <span class="btn btn-danger pull-right"  onclick="cancelImport()"> Retour</span>
+            </div>
+            <div class = "alert alert-danger">
+                Vous n'avez pas encore ajouté cet agent dans la liste des agents. Veuillez effectuer d'abord cette opération.
+            </div>
+        </h:panelGroup>
+        <h:panelGroup rendered="#{fileUploadBean.valid >= 0}">
+            <h:form>
+            <div class = "btn-group btn-import" id = "btn-final">
+                <div class="pull-right">
+                    <h:graphicImage name="img/load.gif" style="height: 40px; display: none;" id ="image-load" />
+                    <span class="btn btn-danger"  onclick="cancelImport()"> Annuler</span>
+                    <span class="btn btn-primary"  onclick="finaliseImport()"> Finaliser l'importation</span>
+                </div>
+            </div>
+
+            <div class = "btn-group btn-import" id = "btn-finish" style="display:none;">
+                <div class="pull-right">
+                    <span class="btn btn-info"  onclick="window.location.reload()"> Afficher la liste</span>
+                    <span class="btn btn-primary" id = "import-new-file"> Importer un autre fichier</span>
+                </div>
+            </div>
+            <div class = "alert alert-warning" style="display: #{fileUploadBean.valid == 0 ? 'block' : 'none'}">
+                Il semble que vous avez déjà importer un fichier généré la même date pour cet agent, vous risquez d'avoir des incohérences dans vos données en continuant.
+            </div>
+            <div class = "alert alert-warning" style="display: #{fileUploadBean.valid == 2 ? 'block' : 'none'}">
+                Vous avez déjà importé un ou des fichier(s) concernant cet agent aujourd'hui, vous pouvez tout de même continuer car la date de génération est différente.
+            </div>
+            <h:panelGroup rendered="#{fileUploadBean.erreurfinalisation}">
+                <p:dataList value="#{fileUploadBean.listeErreurFinale}" var="err" type="unordered" itemType="none" paginator="true" rows="20" styleClass="paginated">
+                    <f:facet name="header">
+                        Erreur de traitement des données
+                    </f:facet>
+                    <h:outputText value="#{err}" style="display:inline-block"/>
+                </p:dataList>
+            </h:panelGroup>
+            <h2 id = "title-tableau-excel">Relevé de vos opérations</h2>
+            <div id = "tableau-excel-container">
             <h:dataTable class ="table table-bordered" value="#{fileUploadBean.lignes}" var="ligneTableau" border="2">
                 <h:column>
                         <f:facet name="header">A</f:facet>
@@ -71,5 +117,7 @@
                 </h:column>
             </h:dataTable>
         </div>
+        </h:form>
+        </h:panelGroup>
     </h:body>
 </html>

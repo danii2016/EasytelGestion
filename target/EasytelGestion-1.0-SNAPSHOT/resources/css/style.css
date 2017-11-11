@@ -25,7 +25,11 @@ body div{
 #head-band .ui-layout-unit-content {
     overflow: hidden;
 }
-#content, #content div {
+#content {
+    padding-bottom: 50px;
+    padding-top: 10px;
+}
+#content, #content div:not(.alert) {
     background: #e2e2e2;
 }
 #formulaire-authentification, #formulaire-authentification div {
@@ -59,8 +63,26 @@ body div{
 #content-add-agent .form-group {
     position: relative
 }
-#content-add-agent .ui-message-error-icon {
-    position: absolute;
-    right: -20px;
-    right: 10px;
+#content-add-agent table {
+    width: 100%;
+}
+#content-add-agent .ui-panelgrid .ui-panelgrid-cell {
+    border: 0;
+}
+#content-add-agent .ui-panelgrid .ui-panelgrid-cell input {
+    width: 100%;
+}
+.ui-widget-content .ui-panelgrid-cell.label {
+    border: 0;
+    color: #000;
+}
+#content .ui-dialog .ui-dialog-buttonpane {
+    text-align: right;
+}
+.btn-group.btn-import {
+    width: 105%;
+    text-align: right;
+}
+.btn-group.btn-import button {
+    margin-left: 10px;
 }

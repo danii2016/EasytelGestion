@@ -9,6 +9,8 @@ package com.easytel.beans;
  *
  * @author andri
  */
+import com.easytel.dao.FichierDAO;
+import com.easytel.model.Fichier;
 import com.easytel.model.LigneTableau;
 import com.easytel.util.SessionUtils;
 import java.io.File;
@@ -22,6 +24,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
@@ -37,8 +41,38 @@ import org.primefaces.model.UploadedFile;
 @ManagedBean
 public class FileUploadBean {
     private boolean lu = false;
+    private boolean erreurfinalisation = false;
+    private int valid = -1;
+    private String path = FacesContext.getCurrentInstance().getExternalContext()
+            .getRealPath("/");
     private String fichier = "";
+    public Fichier currFichier;
 
+    public boolean isErreurfinalisation() {
+        return erreurfinalisation;
+    }
+
+    public void setErreurfinalisation(boolean erreurfinalisation) {
+        this.erreurfinalisation = erreurfinalisation;
+    }
+
+    
+    public int getValid() {
+        return valid;
+    }
+
+    public void setValid(int valid) {
+        this.valid = valid;
+    }
+
+    public Fichier getCurrFichier() {
+        return currFichier;
+    }
+
+    public void setCurrFichier(Fichier currFichier) {
+        this.currFichier = currFichier;
+    }
+    
     public String getFichier() {
         return fichier;
     }
@@ -56,8 +90,6 @@ public class FileUploadBean {
     }
  
     public void fileUploadListener(FileUploadEvent event) throws IOException {
-        String path = FacesContext.getCurrentInstance().getExternalContext()
-            .getRealPath("/");
         SimpleDateFormat fmt = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss");
         String name = fmt.format(new java.util.Date())
                 + event.getFile().getFileName().substring(
@@ -91,6 +123,40 @@ public class FileUploadBean {
     public String readFile() {
         HttpSession session = SessionUtils.getSession();
         String name = (String) session.getAttribute("fichier");
+        File file = new File(path + "../../src/main/webapp/resources/uploads/" + name);
+        ArrayList lignejava = convertjava(file);
+        String numerotrouve = "";
+        String datefichier = "";
+        if(lignejava.size() >= 11 ) {
+            for (int i = 2; i < 11; i++) {
+                ArrayList ligne = (ArrayList) lignejava.get(i);
+                int j = 1;
+                for (Object ligne1 : ligne) {
+                    String lignestring = "";
+                    if (ligne1 instanceof String) {
+                      lignestring = (String) ligne1;
+                    } else if(ligne1 instanceof Double) {
+                        lignestring = ""+ ligne1;
+                    }
+                    if(i== 10 && j== 4) {
+                        numerotrouve = lignestring;
+                    } else if(i == 7 && j == 4) {
+                        datefichier = lignestring;
+                    }
+                    j++;
+                }
+            }
+        }
+        
+        System.out.print("numero : "+numerotrouve+" \n date : "+datefichier);
+        if(!numerotrouve.equals("") && !datefichier.equals("")) {
+            Pattern pattern = Pattern.compile("[0-9]{10}");
+            Matcher matcher = pattern.matcher(numerotrouve);
+            if(matcher.matches()) {
+                this.valid = FichierDAO.getInfo(datefichier, numerotrouve);
+            }
+        }
+        System.out.print(this.valid);
         this.fichier = name;
         this.lu = true;
         return "tableauExcel";
@@ -101,8 +167,7 @@ public class FileUploadBean {
      * @return
      */
     public List<LigneTableau> getLignes(){
-        String path = FacesContext.getCurrentInstance().getExternalContext()
-            .getRealPath("/");
+        
         HttpSession session = SessionUtils.getSession();
         String name = (String) session.getAttribute("fichier");
         File file = new File(path + "../../src/main/webapp/resources/uploads/" + name);
@@ -139,8 +204,6 @@ public class FileUploadBean {
                     }
                     j++;
                 }
-                
-                System.out.print("j = "+j+"\n"+lt.toString());
                 lignes.add(lt);
             }
         }
@@ -190,5 +253,38 @@ public class FileUploadBean {
             System.out.println("error");
         }
         return datafichier;
+    }
+    
+    public List<Fichier> getListeFichier() {
+        ArrayList<Fichier> liste = FichierDAO.getUploaded();
+        return liste;
+    }
+    
+    public void annulImport() {
+        HttpSession session = SessionUtils.getSession();
+        String name = (String) session.getAttribute("fichier");
+        File file = new File(path + "../../src/main/webapp/resources/uploads/" + name);
+        if(file.delete()){
+            System.out.println(file.getName() + " is deleted!");
+        }
+    }
+    
+    public void terminerImport() {
+        ArrayList<LigneTableau> lignes = (ArrayList<LigneTableau>) this.getLignes();
+        boolean result = FichierDAO.saveLines(lignes);
+        FacesMessage message;
+        if(result) {
+           message = new FacesMessage(FacesMessage.SEVERITY_INFO,"Succès", " Les données du fichier ont été enregistré avec succès");
+        } else {
+            this.erreurfinalisation = true;
+            message = new FacesMessage(FacesMessage.SEVERITY_ERROR,"Erreur", " Des erreurs ont été rencontrés lors de l'enregistrement des données. Vérifiez le contenu SVP et réessayez.");
+        }
+        FacesContext.getCurrentInstance().addMessage(null, message);
+    }
+    
+    public ArrayList<String> getlisteErreurFinale() {
+        HttpSession session = SessionUtils.getSession();
+        ArrayList<String>  erreurs = (ArrayList) session.getAttribute("erreurs");
+        return erreurs;
     }
 }

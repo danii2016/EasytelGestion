@@ -3,24 +3,50 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <body>
 
         <ui:composition template="./template/Template.xhtml">
 
             <ui:define name="content">
-                <div class = "container" id = "uploadForm">
+                <div class = "container" id = "uploadList">
+                    <p:dataTable var="fic" value="#{fileUploadBean.listeFichier}" rowKey="#{fic.fic_id}" selectionMode="single" selection="#{fileUploadBean.currFichier}">
+                        <f:facet name="header">
+                            Liste des fichiers importés et traités
+                            <span class = "pull-right btn btn-primary" id = "start-upload"><i class="glyphicon glyphicon-plus"></i> Importer nouveau </span>
+                        </f:facet>
+                        <p:column headerText="Date d'importation">
+                            <h:outputText value="#{fic.fic_dateimport}" />
+                        </p:column>
+
+                        <p:column headerText="Généré le">
+                            <h:outputText value="#{fic.fic_date}" />
+                        </p:column>
+
+                        <p:column headerText="Agent">
+                            <h:outputText value="#{fic.ag_nom}" />
+                        </p:column>
+
+                        <p:column headerText="Numéro">
+                            <h:outputText value="#{fic.ag_numero}" />
+                        </p:column>
+                    </p:dataTable>
+                </div>
+                <div class = "container" id = "uploadForm" style="display: none">
                     <h:form enctype="multipart/form-data" style="width:100%">
                         <p:growl id="message_upload" showDetail="true" />
-                        <p:fileUpload value="#{fileUploadBean.file}" oncomplete="postExecuteUpload()" update="message_upload" mode="advanced" allowTypes="/(\.|\/)(xlsx?)$/" fileUploadListener="#{fileUploadBean.fileUploadListener}">
+                        <span class = "pull-right btn btn-default" id = "return-to-list" style="margin: 3px;">Retour à la liste </span>
+                        <p:fileUpload cancelLabel="Annuler" uploadLabel="Envoyer" label="Choisir" value="" oncomplete="postExecuteUpload()" update="message_upload" mode="advanced" allowTypes="/(\.|\/)(xlsx?)$/" fileUploadListener="#{fileUploadBean.fileUploadListener}">
                         </p:fileUpload>
                     </h:form>
                 </div>
                 <div class = "container" id = "uploadData" style="display: none">
                     <h:form>
                         <p:remoteCommand name="rc" update="tableauDivParent" actionListener="#{fileUploadBean.readFile}" />
-
+                        <p:remoteCommand name="cancelImport" update="msgs" oncomplete="cancel_importation()" actionListener="#{fileUploadBean.annulImport()}" />
+                        <p:remoteCommand name="finaliseImport" update="msgs" onstart="$('#image-load').show()" oncomplete="finish_importation()" actionListener="#{fileUploadBean.terminerImport()}" />
                         <p:growl id="msgs" showDetail="true" />
                         <p:commandButton type="button" onclick="rc()" class ="showData" value="Afficher" icon="ui-icon-refresh" style="opacity: 0" />
                         <h:panelGroup id="tableauDivParent" layout="block">

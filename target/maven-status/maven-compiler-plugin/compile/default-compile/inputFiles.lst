@@ -1,4 +1,5 @@
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/beans/ChartView.java
+/NetbeansProjects/EasytelGestion/src/main/java/com/easytel/filter/NumeroAgentValidator.java
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/model/LigneTableau.java
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/model/Caisse_journalier.java
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/model/C2c_transfert.java
@@ -11,7 +12,9 @@
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/dao/AgentDAO.java
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/beans/AgentBean.java
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/beans/UserBean.java
+/NetbeansProjects/EasytelGestion/src/main/java/com/easytel/filter/NomAgentValidator.java
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/model/Cash_in.java
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/beans/FileUploadBean.java
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/util/SessionUtils.java
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/dao/LoginDAO.java
+/NetbeansProjects/EasytelGestion/src/main/java/com/easytel/dao/FichierDAO.java

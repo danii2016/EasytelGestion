@@ -13,6 +13,7 @@ import javax.inject.Named;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  *
@@ -82,39 +83,31 @@ public class AgentBean {
     public AgentBean() {
     }
     
-    public void saveAgent() {
-        if(currAgent != null) {
-            
-        }
+    public void supprimerAgent() {
+        boolean ok = AgentDAO.deleteAgent(currAgent);
+       FacesContext.getCurrentInstance().addMessage( null,
+                new FacesMessage(ok ? FacesMessage.SEVERITY_INFO : FacesMessage.SEVERITY_ERROR, null, ok ? "Supprimé" : "Echec de la suppression")); 
     }
     
-    public void validateNom() {
-        boolean exist = AgentDAO.check("nom", currAgent.getAg_nom());
-        if(exist) {
-            FacesContext.getCurrentInstance().addMessage( null,
-                new FacesMessage("msgNomAgent", "Cet agent existe déjà"));
-        }
-    }
-    
-    public void validateNumero() {
-        boolean numparsed = false;
-        try{
-            Integer.parseInt(currAgent.getAg_numero());
-            numparsed = true;
-        } catch(NumberFormatException e) {
-            
-        }
-        boolean exist = AgentDAO.check("numero", currAgent.getAg_numero());
-        if(!numparsed) {
-            FacesContext.getCurrentInstance().addMessage( null,
-                new FacesMessage("msgNumeroAgent", "Il y a des caractère non valide dans le numéro entré"));
-        } else if(currAgent.getAg_numero().length() != 10) {
-            FacesContext.getCurrentInstance().addMessage( null,
-                new FacesMessage("msgNumeroAgent", "La longueur du numéro est invalide"));
-        } else if(exist) {
-            FacesContext.getCurrentInstance().addMessage( null,
-                new FacesMessage("msgNumeroAgent", "Ce numéro est utilisé par un agent"));
-        }
+    public void saveCurrent() {
+        HttpServletRequest request = (HttpServletRequest)FacesContext.getCurrentInstance().getExternalContext().getRequest();
+        String nom = request.getParameter("form:inputNomEdit");
+        String adresse = request.getParameter("form:inputAdresseEdit");
+        String id = request.getParameter("form:inputIdEdit");
+        String numero = request.getParameter("form:inputNumeroEdit");
+        String uv = request.getParameter("form:inputUVEdit_hinput");
+        String caisse = request.getParameter("form:inputCaisseEdit_hinput");
+        int idactu = currAgent.getAg_id();
+        System.out.print(uv);
+        currAgent.setAg_nom(nom);
+        currAgent.setAg_adresse(adresse);
+        currAgent.setAg_numero(numero);
+        currAgent.setAg_id(Integer.parseInt(id));
+        currAgent.setAg_uvinitial(Double.parseDouble(uv));
+        currAgent.setAg_caisseinitial(Double.parseDouble(caisse));
+        boolean ok = AgentDAO.saveAgent(idactu, currAgent);
+        FacesContext.getCurrentInstance().addMessage( null,
+                new FacesMessage(ok ? FacesMessage.SEVERITY_INFO : FacesMessage.SEVERITY_ERROR, null, ok ? "Enregistré avec succès" : "Echec de l'enregistrement"));
     }
     
     public void addnew() {
