@@ -147,9 +147,8 @@ public class LigneTableau {
     }
     
     @Override
-    public String toString() {
-        
-        return "Val1 : "+val1+" val2: "+val2+" val3: "+val3+" val4: "+val4;
+    public String toString() { 
+        return "\t"+val1+" | \t"+val2+" | \t"+val3+" | \t"+val4+" | \t"+val5+" | \t"+val6+" | \t"+val7+" | \t"+val8+" | \t"+val9+" | \t"+val10+" | \t"+val11+" | \t"+val12+" | \t"+val13+" | \t"+val14+" | \t"+val15;
     }
     
 }

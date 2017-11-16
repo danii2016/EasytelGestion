@@ -13,12 +13,14 @@ import com.easytel.model.Fichier;
 import com.easytel.model.LigneTableau;
 import com.easytel.util.SessionUtils;
 import com.easytel.util.dataConnect;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
 public class FichierDAO {
@@ -29,12 +31,12 @@ public class FichierDAO {
             PreparedStatement ps = con.prepareStatement("Select fichier.*, ag_nom, ag_numero from fichier join agent on agent.ag_id = fichier.ag_id order by fic_dateimport desc");
             ResultSet res = ps.executeQuery();
             while(res.next()) {
-                Fichier fichier = new Fichier(res.getInt("fic_id"), res.getInt("ag_id"), res.getString("ag_nom"), res.getString("ag_numero"), res.getString("fic_nom"), res.getString("fic_date"), res.getNString("fic_dateimport"));
+                Fichier fichier = new Fichier(res.getInt("fic_id"), res.getInt("ag_id"), res.getString("fic_debutperiode"), res.getString("ag_nom"), res.getString("ag_numero"), res.getString("fic_nom"), reverseSqlDate(res.getString("fic_date")), reverseSqlDate(res.getString("fic_dateimport")));
                 liste.add(fichier);
             }
             ps.close();
         }
-         catch (ClassNotFoundException | SQLException e) {
+        catch (ClassNotFoundException | SQLException e) {
             System.out.print(e);
         }
         return liste;
@@ -54,21 +56,24 @@ public class FichierDAO {
             } else {
                 ok = -2;
             }
+            res.close();
             ps.close();
             ps = con.prepareStatement("Select * from fichier join agent on agent.ag_id = fichier.ag_id where fic_date = ? and ag_numero = ?");
-            ps.setString(1, datefic);
+            ps.setString(1, convertToSql(datefic));
             ps.setString(2, numero);
             res = ps.executeQuery();
             if(res.next()) {
                 ok = 0;
             }
+            res.close();
             ps.close();
-            PreparedStatement ps2 = con.prepareStatement("Select * from fichier join agent on agent.ag_id = fichier.ag_id where fic_dateimport = NOW() and ag_numero = ?");
+            PreparedStatement ps2 = con.prepareStatement("Select * from fichier join agent on agent.ag_id = fichier.ag_id where fic_dateimport like DATE_FORMAT(NOW(),'%Y-%m-%d%') and ag_numero = ?");
             ps2.setString(1, numero);
             res = ps2.executeQuery();
             if(res.next() && ok != 0 && ok != -2) {
                 ok = 2;
             }
+            res.close();
             ps2.close();
             con.close();
         } catch(ClassNotFoundException | SQLException e) {
@@ -79,11 +84,13 @@ public class FichierDAO {
     
     public static boolean saveLines(ArrayList<LigneTableau> lignes) {
         boolean saved = true;
-        if(lignes.size() < 11) {
+        ArrayList<String> erreurs = new ArrayList();
+        ArrayList<String> infos = new ArrayList();
+        if(lignes.size() < 13) {
             saved = false;
+            erreurs.add("La structure du fichier n'est pas correct ou le fichier est vide");
         } else {
             //Début par l'enregistrement de l'importation
-            ArrayList<String> erreurs = new ArrayList();
             double totalci = 0, 
                     totalcommissionci = 0, 
                     totalco = 0, 
@@ -97,11 +104,11 @@ public class FichierDAO {
                 long idfichier = -1;
                 String numeroagent = lignes.get(8).getVal4();
                 ps = con.prepareStatement("insert into fichier(ag_id, fic_debutperiode, fic_finperiode, fic_nom, fic_date, fic_dateimport) values(?, ?, ?, ?, ?, now())", Statement.RETURN_GENERATED_KEYS);
-                ps.setString(1, (String) session.getAttribute("id_agent"));
+                ps.setInt(1, (int) session.getAttribute("id_agent"));
                 ps.setString(2, convertToSql(lignes.get(2).getVal4()));
                 ps.setString(3, convertToSql(lignes.get(3).getVal4()));
-                ps.setString(1, (String) session.getAttribute("fichier"));
-                ps.setString(3, convertToSql(lignes.get(5).getVal4()));
+                ps.setString(4, (String) session.getAttribute("fichier"));
+                ps.setString(5, convertToSql(lignes.get(5).getVal4()));
                 int affectedRows = ps.executeUpdate();
                 if(affectedRows != 0) {
                     res = ps.getGeneratedKeys();
@@ -127,7 +134,7 @@ public class FichierDAO {
                                 System.out.print("ligne non traité "+lt.getVal1());
                             }
                             if(numero != -1 && !lt.getVal7().toUpperCase().equals("ECHEC")) {
-                                switch(lt.getVal5().toLowerCase()) {
+                                switch(lt.getVal5().toUpperCase()) {
                                     case "CASH IN": 
                                         if(lt.getVal10().equals(numeroagent)) {
                                             double montant = -1;
@@ -139,15 +146,17 @@ public class FichierDAO {
                                                 System.out.print("Montant "+lt.getVal12()+" ou commission "+lt.getVal14()+" non traité");
                                             }
                                             if(montant != -1 && commission != -1) {
-                                                ps = con.prepareStatement("insert into cash_in(fic_id, ci_heure, ci_numero, ci_montant, ci_commission) values (?, ?, ?, ?)");
+                                                ps = con.prepareStatement("insert into cash_in(fic_id, ci_heure, ci_numero, ci_montant, ci_commission) values(?, ?, ?, ?, ?)");
                                                 ps.setLong(1, idfichier);
-                                                ps.setString(2, lt.getVal2());
+                                                ps.setString(2, lt.getVal3());
                                                 ps.setString(3, lt.getVal11());
                                                 ps.setDouble(4, montant);
                                                 ps.setDouble(5, commission);
-                                                if(!ps.execute()) {
+                                                int b = ps.executeUpdate();
+                                                if(b <= 0) {
                                                     saved = false;
                                                     erreurs.add("Impossible d'insérer le cash in dans la base");
+                                                } else {
                                                     totalci += montant;
                                                     totalcommissionci += commission;
                                                 }
@@ -169,15 +178,17 @@ public class FichierDAO {
                                                 System.out.print("Montant "+lt.getVal13()+" ou commission "+lt.getVal14()+" non traité");
                                             }
                                             if(montant != -1 && commission != -1) {
-                                                ps = con.prepareStatement("insert into cash_out(fic_id, co_heure, co_numero, co_montant, co_commission) values(?, ?, ?, ?)");
+                                                ps = con.prepareStatement("insert into cash_out(fic_id, co_heure, co_numero, co_montant, co_commission) values(?, ?, ?, ?, ?)");
                                                 ps.setLong(1, idfichier);
-                                                ps.setString(2, lt.getVal2());
+                                                ps.setString(2, lt.getVal3());
                                                 ps.setString(3, lt.getVal11());
                                                 ps.setDouble(4, montant);
                                                 ps.setDouble(5, commission);
-                                                if(!ps.execute()) {
+                                                int b = ps.executeUpdate();
+                                                if(b <= 0) {
                                                     saved = false;
                                                     erreurs.add("Impossible d'insérer le cash out dans la base");
+                                                } else {
                                                     totalco += montant;
                                                     totalcommissionco += commission;
                                                 }
@@ -198,15 +209,17 @@ public class FichierDAO {
                                                 System.out.print("Montant "+lt.getVal13()+" ou commission "+lt.getVal14()+" non traité");
                                             }
                                             if(montant != -1) {
-                                                ps = con.prepareStatement("insert into c2c_transfert(fic_id, c2c_type, c2c_heure, c2c_numero, c2c_montant) values(?, ?, ?, ?, ?)");
+                                                ps = con.prepareStatement("insert into c2c_transfer(fic_id, c2c_type, c2c_heure, c2c_numero, c2c_montant) values(?, ?, ?, ?, ?)");
                                                 ps.setLong(1, idfichier);
                                                 ps.setString(2, type);
-                                                ps.setString(3, lt.getVal2());
+                                                ps.setString(3, lt.getVal3());
                                                 ps.setString(4, lt.getVal11());
                                                 ps.setDouble(5, montant);
-                                                if(!ps.execute()) {
+                                                int b = ps.executeUpdate();
+                                                if(b <= 0) {
                                                     saved = false;
                                                     erreurs.add("Impossible d'insérer le C2C transfert dans la base");
+                                                } else {
                                                     totalcredittransfert += montant;
                                                 }
                                             } else {
@@ -215,10 +228,13 @@ public class FichierDAO {
                                         } else {
                                             erreurs.add("Numero agent : "+lt.getVal10()+" différent de celui inscrit au début du fichier");
                                         }
-                                    default: break;
+                                        break;
+                                    default: 
+                                        erreurs.add("Ligne non reconnu "+lt.getVal5().toUpperCase()+" "+lt.toString());
+                                        break;
                                 }
                             } else {
-                                erreurs.add("Ligne echec non traité : "+lt.toString());
+                                infos.add("Ligne non traité : "+lt.toString());
                             }
                         } 
                     }
@@ -226,7 +242,7 @@ public class FichierDAO {
                 if(saved) {
                     String datejour = convertToSql(lignes.get(3).getVal4());
                     ps = con.prepareStatement("select * from caisse_journalier where ag_id = ? and cj_date = ?");
-                    ps.setString(1, (String) session.getAttribute("id_agent"));
+                    ps.setInt(1, (int) session.getAttribute("id_agent"));
                     ps.setString(2, datejour);
                     res = ps.executeQuery();
                     if(res.next()) {
@@ -242,7 +258,7 @@ public class FichierDAO {
                         res.close();
                         ps.close();
                         ps = con.prepareStatement("select * from appro_caisse where ag_id = ? and apc_date = ?");
-                        ps.setString(1, (String) session.getAttribute("id_agent"));
+                        ps.setInt(1, (int) session.getAttribute("id_agent"));
                         ps.setString(2, datejour);
                         res = ps.executeQuery();
                         while(res.next()) {
@@ -257,7 +273,7 @@ public class FichierDAO {
                         comco = comco + totalcommissionco;
                         double csfinal = csinitial + totci + appro - totco - degcs;
                         double uvfinal = uvinitial - totci + totco + tottrans;
-                        ps = con.prepareStatement("update caisse_journalier set cj_totalci = ?, cj_totalco = ?, cj_totaltransfert = ?,  cj_commissionci = ?, cj_commissionco = ?, cj_caissefinal = ?, cj_ufinal");
+                        ps = con.prepareStatement("update caisse_journalier set cj_totalci = ?, cj_totalco = ?, cj_totaltransfert = ?,  cj_commissionci = ?, cj_commissionco = ?, cj_caissefinal = ?, cj_uvfinal = ?");
                         ps.setDouble(1, totci);
                         ps.setDouble(2, totco);
                         ps.setDouble(3, tottrans);
@@ -265,14 +281,15 @@ public class FichierDAO {
                         ps.setDouble(5, comco);
                         ps.setDouble(6, csfinal);
                         ps.setDouble(7, uvfinal);
-                        if(!ps.execute()) {
+                        int b = ps.executeUpdate();
+                        if(b <= 0) {
                             saved = false;
                             erreurs.add("La caisse journalière ne peut pas être mis à jour");
                         }
                     } else {
                         ps.close();
                         ps = con.prepareStatement("select * from caisse_journalier where ag_id = ? and cj_date < ? order by cj_date desc");
-                        ps.setString(1, (String) session.getAttribute("id_agent"));
+                        ps.setInt(1, (int) session.getAttribute("id_agent"));
                         ps.setString(2, datejour);
                         res = ps.executeQuery();
                         if(res.next()) {
@@ -282,8 +299,8 @@ public class FichierDAO {
                             ps.close();
                             double csfinal = csinitial + totalci - totalco;
                             double uvfinal = uvinitial - totalci + totalco + totalcredittransfert;
-                            ps = con.prepareStatement("insert into caisse_journalier(ag_id, cj_date, cj_caisseinital, cj_uvinitial, cj_totalci, cj_totalco, cj_commissionci, cj_commissionco, cj_totaltransfert, cj_caissefinal, cj_uvfinal");
-                            ps.setString(1, (String) session.getAttribute("id_agent"));
+                            ps = con.prepareStatement("insert into caisse_journalier(ag_id, cj_date, cj_caisseinital, cj_uvinitial, cj_totalci, cj_totalco, cj_commissionci, cj_commissionco, cj_totaltransfert, cj_caissefinal, cj_uvfinal) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                            ps.setInt(1, (int) session.getAttribute("id_agent"));
                             ps.setString(2, datejour);
                             ps.setDouble(3, csinitial);
                             ps.setDouble(4, uvinitial);
@@ -294,7 +311,8 @@ public class FichierDAO {
                             ps.setDouble(9, totalcredittransfert);
                             ps.setDouble(10, csfinal);
                             ps.setDouble(11, csfinal);
-                            if(!ps.execute()) {
+                            int b = ps.executeUpdate();
+                            if(b <= 0) {
                                 saved = false;
                                 erreurs.add("Echec de la sauvegarde de la caisse journalier dans la base");
                             }
@@ -302,7 +320,7 @@ public class FichierDAO {
                         } else {
                             ps.close();
                             ps = con.prepareStatement("select * from agent where ag_id = ?");
-                            ps.setString(1, (String) session.getAttribute("id_agent"));
+                            ps.setInt(1, (int) session.getAttribute("id_agent"));
                             res = ps.executeQuery();
                             if(res.next()) {
                                 double csinitial = res.getDouble("ag_caisseinitial");
@@ -311,8 +329,8 @@ public class FichierDAO {
                                 ps.close();
                                 double csfinal = csinitial + totalci - totalco;
                                 double uvfinal = uvinitial - totalci + totalco + totalcredittransfert;
-                                ps = con.prepareStatement("insert into caisse_journalier(ag_id, cj_date, cj_caisseinital, cj_uvinitial, cj_totalci, cj_totalco, cj_commissionci, cj_commissionco, cj_totaltransfert, cj_caissefinal, cj_uvfinal");
-                                ps.setString(1, (String) session.getAttribute("id_agent"));
+                                ps = con.prepareStatement("insert into caisse_journalier(ag_id, cj_date, cj_caisseinitial, cj_uvinitial, cj_totalci, cj_totalco, cj_commissionci, cj_commissionco, cj_totaltransfert, cj_caissefinal, cj_uvfinal) values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                                ps.setInt(1, (int) session.getAttribute("id_agent"));
                                 ps.setString(2, datejour);
                                 ps.setDouble(3, csinitial);
                                 ps.setDouble(4, uvinitial);
@@ -323,7 +341,8 @@ public class FichierDAO {
                                 ps.setDouble(9, totalcredittransfert);
                                 ps.setDouble(10, csfinal);
                                 ps.setDouble(11, csfinal);
-                                if(!ps.execute()) {
+                                int b = ps.executeUpdate();
+                                if(b <= 0) {
                                     saved = false;
                                     erreurs.add("Echec de la sauvegarde de la caisse journalier dans la base");
                                 }
@@ -340,7 +359,84 @@ public class FichierDAO {
                 System.out.print(e);
                 erreurs.add("Des erreurs ont été rencontré lors des insertions des données dans la base");
             }
+            session.setAttribute("infos", infos);
             session.setAttribute("erreurs", erreurs);
+        }
+        
+        return erreurs.isEmpty() ? saved : false;
+    }
+    
+    public static boolean removeFileUploaded(Fichier fichier) {
+        boolean saved = true;
+        String deleteci = "delete from cash_in where fic_id = ?",
+                deleteco = "delete from cash_out where fic_id = ?",
+                deletetrans = "delete from c2c_transfer where fic_id = ?",
+                deleteimport = "delete from fichier where fic_id = ?",
+                deleteappro = "delete from appro_caisse where cj_id = (select cj_id from caisse_journalier where cj_date = ? and ag_id = ?)",
+                deletecaisse = "delete from caisse_journalier where cj_date = ? and ag_id = ?";
+        try{
+            Connection con = dataConnect.getConnection();
+            PreparedStatement ps;
+            ps = con.prepareStatement(deleteappro);
+            ps.setString(1, fichier.getFic_debutperiode());
+            ps.setInt(2, fichier.getAg_id());
+            if(ps.execute()) {
+                saved = false;
+            }
+            ps.close();
+            if(saved) {
+                ps = con.prepareStatement(deletecaisse);
+                ps.setString(1, fichier.getFic_debutperiode());
+                ps.setInt(2, fichier.getAg_id());
+                if(ps.execute()) {
+                    saved = false;
+                }
+                ps.close();
+            }
+            if(saved) {
+                ps = con.prepareStatement(deletetrans);
+                ps.setInt(1, fichier.getFic_id());
+                if(ps.execute()) {
+                    saved = false;
+                }
+                ps.close();
+            }
+            if(saved) {
+                ps = con.prepareStatement(deleteci);
+                ps.setInt(1, fichier.getFic_id());
+                if(ps.execute()) {
+                    saved = false;
+                }
+                ps.close();
+            }
+            if(saved) {
+                ps = con.prepareStatement(deleteco);
+                ps.setInt(1, fichier.getFic_id());
+                if(ps.execute()) {
+                    saved = false;
+                }
+                ps.close();
+            }
+            if(saved) {
+                ps = con.prepareStatement(deleteimport);
+                ps.setInt(1, fichier.getFic_id());
+                if(ps.execute()) {
+                    saved = false;
+                }
+                ps.close();
+            }
+            if(saved) {
+                String path = FacesContext.getCurrentInstance().getExternalContext()
+                                .getRealPath("/");
+                File file = new File(path + "../../src/main/webapp/resources/uploads/" + fichier.getFic_nom());
+                if(file.delete()){
+                    System.out.println(file.getName() + " is deleted!");
+                }
+            }
+        } catch(ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+            System.out.print(e);
+            saved = false;
         }
         return saved;
     }
@@ -353,6 +449,17 @@ public class FichierDAO {
         } else {
             String datesplit[] = tabsplit[0].split("/");
             return datesplit[2]+"-"+datesplit[1]+"-"+datesplit[0];
+        }
+    }
+    
+    private static String reverseSqlDate(String date) {
+        String tabsplit[] = date.split(" ");
+        if(tabsplit.length == 2) {
+            String datesplit[] = tabsplit[0].split("-");
+            return datesplit[2]+"/"+datesplit[1]+"/"+datesplit[0]+" "+tabsplit[1];
+        } else {
+            String datesplit[] = tabsplit[0].split("/");
+            return datesplit[2]+"/"+datesplit[1]+"/"+datesplit[0];
         }
     }
 }

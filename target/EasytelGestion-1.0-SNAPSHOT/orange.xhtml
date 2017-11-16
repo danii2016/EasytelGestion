@@ -12,7 +12,11 @@
 
             <ui:define name="content">
                 <div class = "container" id = "uploadList">
-                    <p:dataTable var="fic" value="#{fileUploadBean.listeFichier}" rowKey="#{fic.fic_id}" selectionMode="single" selection="#{fileUploadBean.currFichier}">
+                    <h:form id="form">
+                    <p:dataTable id ="fichiers" var="fic" value="#{fileUploadBean.listeFichier}" rowKey="#{fic.fic_id}" selectionMode="single" selection="#{fileUploadBean.currFichier}"
+                                 paginator="true"
+                                paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                rowsPerPageTemplate="10,20,50,100">
                         <f:facet name="header">
                             Liste des fichiers importés et traités
                             <span class = "pull-right btn btn-primary" id = "start-upload"><i class="glyphicon glyphicon-plus"></i> Importer nouveau </span>
@@ -33,7 +37,25 @@
                             <h:outputText value="#{fic.ag_numero}" />
                         </p:column>
                     </p:dataTable>
+                    <p:contextMenu for="fichiers">
+                        <p:menuitem value="Supprimer" icon="ui-icon-close" onclick = "PF('confirmSuppFile').show()" />
+                    </p:contextMenu> 
+                    <p:confirmDialog message="Vous êtes sur de suprimer ce fichier ? Les informations reliées à ce fichier seront supprimés" 
+                                    showEffect="fade"
+                                    hideEffect="explode" 
+                                    widgetVar="confirmSuppFile">
+                       <p:commandButton title="NePasSupprimer" 
+                                        value="Non" 
+                                        oncomplete="PF('confirmSuppFile').hide()"/>
+                       <p:commandButton title="Supprimer" 
+                                        value="Oui" 
+                                        action="#{fileUploadBean.supprimerFichier()}" 
+                                        oncomplete="PF('confirmSuppFile').hide(); $('#refreshListeFichier').click();" 
+                                        update="fichiers"/>
+                </p:confirmDialog>
+                    </h:form>
                 </div>
+               
                 <div class = "container" id = "uploadForm" style="display: none">
                     <h:form enctype="multipart/form-data" style="width:100%">
                         <p:growl id="message_upload" showDetail="true" />
@@ -46,7 +68,7 @@
                     <h:form>
                         <p:remoteCommand name="rc" update="tableauDivParent" actionListener="#{fileUploadBean.readFile}" />
                         <p:remoteCommand name="cancelImport" update="msgs" oncomplete="cancel_importation()" actionListener="#{fileUploadBean.annulImport()}" />
-                        <p:remoteCommand name="finaliseImport" update="msgs" onstart="$('#image-load').show()" oncomplete="finish_importation()" actionListener="#{fileUploadBean.terminerImport()}" />
+                        <p:remoteCommand name="finaliseImport" update="msgs @form" onstart="$('.load-import-image').show()" oncomplete="finish_importation()" actionListener="#{fileUploadBean.terminerImport()}" />
                         <p:growl id="msgs" showDetail="true" />
                         <p:commandButton type="button" onclick="rc()" class ="showData" value="Afficher" icon="ui-icon-refresh" style="opacity: 0" />
                         <h:panelGroup id="tableauDivParent" layout="block">

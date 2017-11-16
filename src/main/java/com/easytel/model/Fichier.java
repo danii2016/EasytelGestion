@@ -12,13 +12,14 @@ package com.easytel.model;
 public class Fichier {
     private int fic_id;
     private int ag_id;
+    private String fic_debutperiode;
     private String ag_nom = "";
     private String ag_numero = "";
     private String fic_nom;
     private String fic_date;
     private String fic_dateimport;
     
-    public Fichier(int fic_id, int ag_id, String ag_nom, String ag_numero, String fic_nom, String fic_date, String fic_dateimport)  {
+    public Fichier(int fic_id, int ag_id, String fic_debutperiode, String ag_nom, String ag_numero, String fic_nom, String fic_date, String fic_dateimport)  {
         this.fic_id = fic_id;
         this.ag_id = ag_id;
         this.ag_nom = ag_nom;
@@ -26,6 +27,7 @@ public class Fichier {
         this.fic_nom = fic_nom;
         this.fic_date = fic_date;
         this.fic_dateimport = fic_dateimport;
+        this.fic_debutperiode = fic_debutperiode;
     }
 
     public String getAg_numero() {
@@ -82,6 +84,14 @@ public class Fichier {
 
     public void setFic_dateimport(String fic_dateimport) {
         this.fic_dateimport = fic_dateimport;
+    }
+
+    public String getFic_debutperiode() {
+        return fic_debutperiode;
+    }
+
+    public void setFic_debutperiode(String fic_debutperiode) {
+        this.fic_debutperiode = fic_debutperiode;
     }
     
 }

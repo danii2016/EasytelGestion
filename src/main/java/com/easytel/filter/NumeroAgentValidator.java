@@ -23,20 +23,20 @@ import javax.faces.validator.ValidatorException;
 @FacesValidator("com.easytel.filter.NumeroAgentValidator")
 public class NumeroAgentValidator implements Validator{
 
-	private static final String NUMERO_PATTERN = "[0-9]{10}";
+	private static final String NUMERO_PATTERN = "^032[0-9]{7}$";
 
 	private Pattern pattern;
 	private Matcher matcher;
 
 	public NumeroAgentValidator(){
-		  pattern = Pattern.compile(NUMERO_PATTERN);
+            pattern = Pattern.compile(NUMERO_PATTERN);
 	}
 
 	@Override
 	public void validate(FacesContext context, UIComponent component,
 			Object value) throws ValidatorException {
-
 		matcher = pattern.matcher(value.toString());
+                System.out.print(matcher);
                 boolean exist = AgentDAO.check("numero", value.toString());
 		if(!matcher.matches()){
 			FacesMessage msg =

@@ -5,6 +5,9 @@
  */
 package com.easytel.model;
 
+import com.easytel.util.FonctionUtils;
+import java.math.BigDecimal;
+
 /**
  *
  * @author andri
@@ -15,6 +18,14 @@ public class Cash_out {
     private String co_heure;
     private String co_numero;
     private double co_montant;
+
+    public Cash_out(int co_id, int fic_id, String co_heure, String co_numero, double co_montant) {
+        this.co_id = co_id;
+        this.fic_id = fic_id;
+        this.co_heure = co_heure;
+        this.co_numero = co_numero;
+        this.co_montant = co_montant;
+    }
 
     public int getCo_id() {
         return co_id;
@@ -48,8 +59,8 @@ public class Cash_out {
         this.co_numero = co_numero;
     }
 
-    public double getCo_montant() {
-        return co_montant;
+    public String getCo_montant() {
+        return FonctionUtils.normaliseChiffre(new BigDecimal(co_montant));
     }
 
     public void setCo_montant(double co_montant) {

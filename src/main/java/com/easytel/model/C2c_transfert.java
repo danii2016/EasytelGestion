@@ -5,6 +5,9 @@
  */
 package com.easytel.model;
 
+import com.easytel.util.FonctionUtils;
+import java.math.BigDecimal;
+
 /**
  *
  * @author andri
@@ -16,6 +19,14 @@ public class C2c_transfert {
     private String c2c_type;
     private String c2c_numero;
     private double c2c_montant;
+    
+    public C2c_transfert(int c2c_id, int fic_id, String c2c_heure, String c2c_numero, double c2c_montant) {
+        this.c2c_id = c2c_id;
+        this.fic_id = fic_id;
+        this.c2c_heure = c2c_heure;
+        this.c2c_numero = c2c_numero;
+        this.c2c_montant = c2c_montant;
+    }
 
     public int getC2c_id() {
         return c2c_id;
@@ -57,8 +68,8 @@ public class C2c_transfert {
         this.c2c_numero = c2c_numero;
     }
 
-    public double getC2c_montant() {
-        return c2c_montant;
+    public String getC2c_montant() {
+        return FonctionUtils.normaliseChiffre(new BigDecimal(c2c_montant));
     }
 
     public void setC2c_montant(double c2c_montant) {

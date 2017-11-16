@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -121,4 +122,22 @@ public class AgentDAO {
         return deleted;
     }
     
+
+    public static List<String> getListNomLike(String query) {
+        ArrayList<String> liste = new ArrayList();
+        try{
+            Connection con = dataConnect.getConnection();
+            PreparedStatement ps = con.prepareStatement("select ag_nom from agent where ag_nom like ?");
+            ps.setString(1, "%"+query+"%");
+            ResultSet res = ps.executeQuery();
+            while(res.next()) {
+                liste.add(res.getString("ag_nom"));
+            }
+            ps.close();
+            con.close();
+        } catch (ClassNotFoundException | SQLException e) {
+            System.out.print(e);
+        }
+        return liste;
+    }
 }

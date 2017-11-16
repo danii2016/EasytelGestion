@@ -1,9 +1,13 @@
+/NetbeansProjects/EasytelGestion/src/main/java/com/easytel/beans/SuiviJournalierBean.java
+/NetbeansProjects/EasytelGestion/src/main/java/com/easytel/dao/SuiviJourDAO.java
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/beans/ChartView.java
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/filter/NumeroAgentValidator.java
+/NetbeansProjects/EasytelGestion/src/main/java/com/easytel/util/FonctionUtils.java
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/model/LigneTableau.java
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/model/Caisse_journalier.java
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/model/C2c_transfert.java
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/model/Fichier.java
+/NetbeansProjects/EasytelGestion/src/main/java/com/easytel/filter/SimpleNumeroValidator.java
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/util/dataConnect.java
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/filter/AuthorizationFilter.java
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/model/Cash_out.java

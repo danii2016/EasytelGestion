@@ -1,0 +1,268 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <body>
+
+        <ui:composition template="./template/Template.xhtml">
+
+            <ui:define name="content">
+                <div class="container">
+                    <h:form id = "formsuivi">
+                        <div class = "form-inline">
+                        <div class = "btn-group">
+                            <p:outputLabel value="Choisir un agent:" for="selectAgent" />
+                            <p:autoComplete id="selectAgent" dropdown="true" value="#{suiviJournalierBean.nom_agent}"  completeMethod="#{suiviJournalierBean.completeText}"  >
+                                <p:ajax event="itemSelect" process="@form" update="panelSuiviJournalier" listener="#{suiviJournalierBean.changeAgent}" />
+                                <p:ajax event="change" process="@form" update="panelSuiviJournalier" listener="#{suiviJournalierBean.changeAgent}" />
+                            </p:autoComplete>
+                        </div>
+                        <div class = "btn-group pull-right">
+                            <p:outputLabel for="date_jour" value="Date :" />
+                            <p:calendar id="date_jour"  value="#{suiviJournalierBean.dateJour}"  maxdate="#{suiviJournalierBean.dateMax}">
+                                <p:ajax event="dateSelect" process="@form" update="panelSuiviJournalier" listener="#{suiviJournalierBean.changeAgent}" />
+                                <p:ajax event="change" process="@form" update="panelSuiviJournalier" listener="#{suiviJournalierBean.changeAgent}" />
+                            </p:calendar>
+                        </div>
+                        </div>
+                        <div id = "data-journalier">
+                            <h:panelGroup id="panelSuiviJournalier">
+                                <h:panelGroup id="panelerr" rendered="#{!suiviJournalierBean.changed}">
+                                    <div class="alert alert-info">Aucun info à afficher sur les données séléctionnés. Changez la date ou l'Agent.</div>
+                                </h:panelGroup>
+                                    
+                                <h:panelGroup id="paneldata" rendered="#{suiviJournalierBean.changed}">
+                                    <h3 style="margin-top:10px">Caisse journalier le #{suiviJournalierBean.datefr}</h3>
+                                    <p:tabView>
+                                        <p:tab title="Vue d'ensemble">
+                                            <span class="btn btn-primary" style="position: absolute;top: 10px;right: 5px;" onclick="PF('dlgdegage').show();">
+                                                Dégagement caisse
+                                            </span>
+                                            <h:panelGrid columns="2" cellpadding="10">
+                                                <h:outputText value="Caisse initial : " style="font-weight: bold"/>
+                                                <h:outputText value="#{suiviJournalierBean.caisse.cj_caisseinitial}" />
+
+                                                <h:outputText value="UV Initial : " style="font-weight: bold"/>
+                                                <h:outputText value="#{suiviJournalierBean.caisse.cj_caisseinitial}" />
+
+                                                <h:outputText value="Commission : " style="font-weight: bold"/>
+                                                <h:outputText value="#{suiviJournalierBean.caisse.cj_commission}" />
+
+                                                <h:outputText value="Approvissionnement caisse : " style="font-weight: bold"/>
+                                                <h:outputText value="#{suiviJournalierBean.caisse.cj_approcaisse}" />
+
+                                                <h:outputText value="Dégagement caisse : " style="font-weight: bold"/>
+                                                <h:outputText value="#{suiviJournalierBean.caisse.cj_degagementcaisse}" />
+
+                                                <h:outputText value="Total transfert : " style="font-weight: bold"/>
+                                                <h:outputText value="#{suiviJournalierBean.caisse.cj_totaltransfert}" />
+
+                                                <h:outputText value="Total cash in : " style="font-weight: bold"/>
+                                                <h:outputText value="#{suiviJournalierBean.caisse.cj_totalcashin}" />
+
+                                                <h:outputText value="Total cash out :" style="font-weight: bold"/>
+                                                <h:outputText value="#{suiviJournalierBean.caisse.cj_totalcashout}" />
+
+                                                <h:outputText value="Caisse final :" style="font-weight: bold"/>
+                                                <h:outputText value="#{suiviJournalierBean.caisse.cj_caissefinal}" />
+                                                
+                                                <h:outputText value="UV final :" style="font-weight: bold"/>
+                                                <h:outputText value="#{suiviJournalierBean.caisse.cj_uvfinal}" />
+                                            </h:panelGrid>
+                                        </p:tab>
+                                        <p:tab title="Cash In">
+                                            <p:dataTable var="ci" value="#{suiviJournalierBean.listeCashIn}">
+                                                <p:column headerText="Date">
+                                                    <h:outputText value="#{suiviJournalierBean.datefr}" />
+                                                </p:column>
+
+                                                <p:column headerText="Heure">
+                                                    <h:outputText value="#{ci.ci_heure}" />
+                                                </p:column>
+
+                                                <p:column headerText="Numéro client">
+                                                    <h:outputText value="#{ci.ci_numero}" />
+                                                </p:column>
+
+                                                <p:column headerText="Montant">
+                                                    <h:outputText value="#{ci.ci_montant}" />
+                                                </p:column>
+                                            </p:dataTable>
+                                        </p:tab>
+                                        <p:tab title="Cash Out">
+                                            <p:dataTable var="co" value="#{suiviJournalierBean.listeCashOut}">
+                                                <p:column headerText="Date">
+                                                    <h:outputText value="#{suiviJournalierBean.datefr}" />
+                                                </p:column>
+
+                                                <p:column headerText="Heure">
+                                                    <h:outputText value="#{co.co_heure}" />
+                                                </p:column>
+
+                                                <p:column headerText="Numéro client">
+                                                    <h:outputText value="#{co.co_numero}" />
+                                                </p:column>
+
+                                                <p:column headerText="Montant">
+                                                    <h:outputText value="#{co.co_montant}" />
+                                                </p:column>
+                                            </p:dataTable>
+                                        </p:tab>
+                                        <p:tab title="C2C Transfer">
+                                            <p:dataTable var="c2c" value="#{suiviJournalierBean.listeTransfert}">
+                                                <p:column headerText="Date">
+                                                    <h:outputText value="#{suiviJournalierBean.datefr}" />
+                                                </p:column>
+
+                                                <p:column headerText="Heure">
+                                                    <h:outputText value="#{c2c.c2c_heure}" />
+                                                </p:column>
+
+                                                <p:column headerText="Numéro d'origine">
+                                                    <h:outputText value="#{c2c.c2c_numero}" />
+                                                </p:column>
+
+                                                <p:column headerText="Montant">
+                                                    <h:outputText value="#{c2c.c2c_montant}" />
+                                                </p:column>
+                                            </p:dataTable>
+                                        </p:tab>
+                                        <p:tab title="Appro caisse">
+                                            <span class="btn btn-primary" style="position: absolute;top: 10px;right: 5px;" onclick="PF('dlgappro').show();">
+                                                <i class = "glyphicon glyphicon-plus"></i> Ajouter
+                                            </span>
+                                            <p:dataTable id ="appro_caisses" var="ap" value="#{suiviJournalierBean.listeApproCaisse}" rowKey="#{ap.apc_id}"
+                                                         selection="#{suiviJournalierBean.currAppro}" selectionMode="single">
+                                                <p:ajax event="rowSelect" immediate="true" 
+                                                        listener="#{suiviJournalierBean.approSelect}" oncomplete="$('input.ui-autocomplete-input').trigger('itemSelect')"
+                                                        />
+                                                <p:column headerText="Date">
+                                                    <h:outputText value="#{suiviJournalierBean.datefr}" />
+                                                </p:column>
+
+                                                <p:column headerText="Heure">
+                                                    <h:outputText value="#{ap.apc_heure}" />
+                                                </p:column>
+
+                                                <p:column headerText="Montant">
+                                                    <h:outputText value="#{ap.apc_montant}" />
+                                                </p:column>
+                                            </p:dataTable>
+                                            <p:contextMenu for="appro_caisses">
+                                                <p:menuitem value="Afficher/Editer" update="" icon="ui-icon-search" oncomplete="PF('approDialog').show()"/>
+                                                <p:menuitem value="Supprimer" icon="ui-icon-close" onclick = "PF('confirmSuppAppro').show()" />
+                                            </p:contextMenu>
+                                            <p:dialog id="approDetail" closable="false" header="Editer appro caisse" widgetVar="approDialog" modal="true" width="500" height="200">
+                                                <p:messages id="msgsedit" autoUpdate="true" closable="true"/>
+                                                <div id = "content-editer-degagement">
+                                                    <p:panelGrid columns="3" rendered="#{not empty suiviJournalierBean.currAppro}">
+                                                    <p:outputLabel for="inputHeure" value="Heure" />
+                                                    <p:calendar id="inputHeure" value="#{suiviJournalierBean.currAppro.heure}" pattern="HH:mm" timeOnly="true"  required="true" label="Heure" >
+                                                        <p:ajax update="msgHeure" event="change" />
+                                                    </p:calendar>
+                                                    <p:message for="inputHeure" id="msgHeure" display="icon" />
+
+                                                    <p:outputLabel class="" for="inputDC" value="Dégagement caisse" />
+                                                    <pe:inputNumber class="" id="inputDC" symbol=" AR" symbolPosition="s" 
+                                                                    decimalSeparator="," thousandSeparator="." value = "#{suiviJournalierBean.currAppro.apc_montant}" required="true">
+                                                        <f:validateLength minimum="6" />
+                                                        <p:ajax update="msgDC" event="blur" />
+                                                    </pe:inputNumber>
+                                                    <p:message for="inputDC" id="msgDC" display="icon" />
+
+                                                </p:panelGrid>
+                                                </div>
+                                                <div class="container" style="position: absolute;bottom: 10px;right: 10px;">
+                                                    <div class="btn-group pull-right">
+                                                        <button class="btn btn-danger" onclick="PF('approDialog').hide();">Annuler</button>
+                                                        <p:commandButton class ="btn btn-primary" value="Enregistrer" update="msgsedit" actionListener="#{suiviJournalierBean.saveCurrAppro()}" icon="ui-icon-check" oncomplete="PF('approDialog').hide();$('input.ui-autocomplete-input').trigger('itemSelect')" />
+                                                    </div>
+                                                </div>
+                                            </p:dialog>
+                                        </p:tab>
+                                    </p:tabView>
+                                </h:panelGroup>
+                            </h:panelGroup>
+                        </div>
+                    </h:form>
+                        <p:confirmDialog message="Vous êtes sur de suprimer cet appro caisse?" 
+                                            showEffect="fade"
+                                            hideEffect="explode" 
+                                            widgetVar="confirmSuppAppro">
+                            <h:form>
+                               <p:commandButton title="NePasSupprimer" 
+                                                value="Non" 
+                                                oncomplete="PF('confirmSuppAppro').hide()"/>
+                               <p:commandButton title="Supprimer" 
+                                                value="Oui" 
+                                                action="#{suiviJournalierBean.supprAppro()}" 
+                                                oncomplete="PF('confirmSuppAppro').hide();$('input.ui-autocomplete-input').trigger('itemSelect');" 
+                                                update=""/>
+                               </h:form>
+                        </p:confirmDialog>
+                    <p:dialog header="Dégager caisse" widgetVar="dlgdegage" modal="true" width="500" height="90">
+                        <h:form id = "form_degagement">
+                            <p:messages id="msgs" autoUpdate="true" closable="true"/>
+                            <div id = "content-gerer-degagement">
+                                <p:panelGrid columns="3">
+
+                                <p:outputLabel class="" for="inputDC" value="Montant" />
+                                <pe:inputNumber class="" id="inputDC" symbol=" AR" symbolPosition="s" 
+                                                decimalSeparator="," thousandSeparator="." value = "#{suiviJournalierBean.caisse.cj_degagementcaisse2}" required="true">
+                                    <f:validateLength minimum="1" />
+                                    <p:ajax update="msgDC" event="blur" />
+                                </pe:inputNumber>
+                                <p:message for="inputDC" id="msgDC" display="icon" />
+
+                            </p:panelGrid>
+                            </div>
+                            <div class="container" style="position: absolute;bottom: 10px;right: 10px;">
+                                <div class="btn-group pull-right">
+                                    <button class="btn btn-danger" onclick="PF('dlgdegage').hide();">Annuler</button>
+                                    <p:commandButton class ="btn btn-primary" value="Enregistrer" update="@form:msgs" actionListener="#{suiviJournalierBean.saveDegagement}" icon="ui-icon-check" oncomplete="PF('dlgdegage').hide();$('input.ui-autocomplete-input').trigger('itemSelect')" />
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+                    <p:dialog header="Approvisionneùent caisse" widgetVar="dlgappro" modal="true" width="500" height="200">
+                        <h:form id = "form_approvisionnement">
+                            <p:messages id="msgsappro" autoUpdate="true" closable="true"/>
+                            <div id = "content-gerer-approvisionnement">
+                            <p:panelGrid columns="3" >
+                                <p:outputLabel for="inputHeure" value="Heure" />
+                                <p:calendar id="inputHeure" value="#{suiviJournalierBean.newAppro.heure}" pattern="HH:mm" timeOnly="true"  required="true" label="Heure" >
+                                    <p:ajax update="msgHeure" event="change" />
+                                </p:calendar>
+                                <p:message for="inputHeure" id="msgHeure" display="icon" />
+                                
+                                <p:outputLabel class="" for="inputDC" value="Montant" />
+                                <pe:inputNumber class="" id="inputDC" symbol=" AR" symbolPosition="s" 
+                                                decimalSeparator="," thousandSeparator="." value = "#{suiviJournalierBean.newAppro.apc_montant}" required="true">
+                                    <f:validateLength minimum="6" />
+                                    <p:ajax update="msgDC" event="blur" />
+                                </pe:inputNumber>
+                                <p:message for="inputDC" id="msgDC" display="icon" />
+
+                            </p:panelGrid>
+                            </div>
+                            <div class="container" style="width: 100%;">
+                                <div class="btn-group pull-right">
+                                    <button class="btn btn-danger" onclick="PF('dlgappro').hide();">Annuler</button>
+                                    <p:commandButton class ="btn btn-primary" value="Enregistrer" update="@form:msgsappro" actionListener="#{suiviJournalierBean.saveNewAppro()}" icon="ui-icon-check" oncomplete="PF('dlgappro').hide();$('input.ui-autocomplete-input').trigger('itemSelect')" />
+                                </div>
+                            </div>
+                        </h:form>
+                    </p:dialog>
+                    
+                </div>
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

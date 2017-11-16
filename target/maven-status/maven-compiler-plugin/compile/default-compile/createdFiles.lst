@@ -4,10 +4,14 @@ com/easytel/model/Fichier.class
 com/easytel/beans/FileUploadBean.class
 com/easytel/beans/AgentBean.class
 com/easytel/beans/UserBean.class
+com/easytel/util/FonctionUtils.class
+com/easytel/filter/SimpleNumeroValidator.class
+com/easytel/beans/SuiviJournalierBean.class
 com/easytel/dao/AgentDAO.class
 com/easytel/model/C2c_transfert.class
 com/easytel/dao/FichierDAO.class
 com/easytel/model/Agent.class
+com/easytel/dao/SuiviJourDAO.class
 com/easytel/model/Cash_in.class
 com/easytel/dao/LoginDAO.class
 com/easytel/model/Cash_out.class

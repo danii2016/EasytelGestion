@@ -13,9 +13,16 @@ body{
     background: #541953;
     color: #fff;
 }
-body div{
+body div:not(.alert){
     background: #541953
 }
+body #ui-datepicker-div .ui-datepicker-title {
+    background: #999;
+}
+#ui-datepicker-div, #ui-datepicker-div div {
+    background: #fff;
+}
+
 #wrapper-content div{
     background: #fff
 }
@@ -28,6 +35,7 @@ body div{
 #content {
     padding-bottom: 50px;
     padding-top: 10px;
+    min-height: 450px;
 }
 #content, #content div:not(.alert) {
     background: #e2e2e2;

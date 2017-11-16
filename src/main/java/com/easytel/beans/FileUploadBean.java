@@ -42,12 +42,22 @@ import org.primefaces.model.UploadedFile;
 public class FileUploadBean {
     private boolean lu = false;
     private boolean erreurfinalisation = false;
+    private boolean infofinalisation = false;
     private int valid = -1;
     private String path = FacesContext.getCurrentInstance().getExternalContext()
             .getRealPath("/");
     private String fichier = "";
     public Fichier currFichier;
 
+    public boolean isInfofinalisation() {
+        return infofinalisation;
+    }
+
+    public void setInfofinalisation(boolean infofinalisation) {
+        this.infofinalisation = infofinalisation;
+    }
+
+    
     public boolean isErreurfinalisation() {
         return erreurfinalisation;
     }
@@ -148,15 +158,13 @@ public class FileUploadBean {
             }
         }
         
-        System.out.print("numero : "+numerotrouve+" \n date : "+datefichier);
         if(!numerotrouve.equals("") && !datefichier.equals("")) {
-            Pattern pattern = Pattern.compile("[0-9]{10}");
+            Pattern pattern = Pattern.compile("032[0-9]{7}");
             Matcher matcher = pattern.matcher(numerotrouve);
             if(matcher.matches()) {
                 this.valid = FichierDAO.getInfo(datefichier, numerotrouve);
             }
         }
-        System.out.print(this.valid);
         this.fichier = name;
         this.lu = true;
         return "tableauExcel";
@@ -270,12 +278,19 @@ public class FileUploadBean {
     }
     
     public void terminerImport() {
+        HttpSession session = SessionUtils.getSession();
+        String name = (String) session.getAttribute("fichier");
         ArrayList<LigneTableau> lignes = (ArrayList<LigneTableau>) this.getLignes();
         boolean result = FichierDAO.saveLines(lignes);
         FacesMessage message;
+        this.fichier = name;
+        this.infofinalisation = true;
+        this.lu = true;
         if(result) {
+            this.valid = 3;
            message = new FacesMessage(FacesMessage.SEVERITY_INFO,"Succès", " Les données du fichier ont été enregistré avec succès");
         } else {
+            this.valid = 4;
             this.erreurfinalisation = true;
             message = new FacesMessage(FacesMessage.SEVERITY_ERROR,"Erreur", " Des erreurs ont été rencontrés lors de l'enregistrement des données. Vérifiez le contenu SVP et réessayez.");
         }
@@ -286,5 +301,15 @@ public class FileUploadBean {
         HttpSession session = SessionUtils.getSession();
         ArrayList<String>  erreurs = (ArrayList) session.getAttribute("erreurs");
         return erreurs;
+    }
+    
+    public ArrayList<String> getlisteInfoFinale() {
+        HttpSession session = SessionUtils.getSession();
+        ArrayList<String>  infos = (ArrayList) session.getAttribute("infos");
+        return infos;
+    }
+    
+    public void supprimerFichier() {
+        boolean b = FichierDAO.removeFileUploaded(currFichier);
     }
 }
