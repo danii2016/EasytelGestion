@@ -10,12 +10,16 @@ package com.easytel.dao;
  * @author andri
  */
 import com.easytel.model.*;
+import com.easytel.util.FonctionUtils;
 import com.easytel.util.dataConnect;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 public class SuiviJourDAO {
     
     public static Caisse_journalier getCaisseDuJour(String nom, String date) {
@@ -24,7 +28,7 @@ public class SuiviJourDAO {
             Connection con = dataConnect.getConnection();
             PreparedStatement ps = con.prepareStatement("Select caisse_journalier.*, fic_id, (select sum(apc_montant) from appro_caisse where cj_id = caisse_journalier.cj_id) as cj_approcaisse from caisse_journalier join agent on caisse_journalier.ag_id = agent.ag_id join fichier on (fichier.ag_id = agent.ag_id and caisse_journalier.cj_date = fichier.fic_debutperiode) where ag_nom = ? and cj_date = ?");
             ps.setString(1, nom);
-            ps.setString(2, getSQLDateFromDateShort(date));
+            ps.setString(2, FonctionUtils.getSQLDateFromDateShort(date));
             ResultSet res = ps.executeQuery();
             if(res.next()) {
                 double csi= Double.parseDouble(res.getString("cj_caisseinitial")),
@@ -249,11 +253,34 @@ public class SuiviJourDAO {
         return false;
     }
     
-    private static String getSQLDateFromDateShort(String date) {
-        if(date == null) {
-            return "";
+    public static ArrayList<Agent> getAgentWithStats(Date date) {
+        ArrayList liste = new ArrayList();
+        DateFormat shortDateFormat = DateFormat.getDateTimeInstance(
+        DateFormat.SHORT,
+        DateFormat.SHORT, new Locale("FR","fr"));
+        String datej = FonctionUtils.getSQLDateFromDateShort(shortDateFormat.format(date).split(" ")[0]);
+        try{
+            Connection con = dataConnect.getConnection();
+            PreparedStatement ps = con.prepareStatement("Select agent.*, (select cj_commissionci+cj_commissionco from caisse_journalier where ag_id = agent.ag_id and cj_date = ?) as ag_commission,"+
+                                                        "(select cj_uvfinal from caisse_journalier where ag_id = agent.ag_id and cj_date = ?) as ag_uv,"+
+                                                        "(select cj_caissefinal from caisse_journalier where ag_id = agent.ag_id and cj_date = ?) as ag_caisse"+
+                                                        " from agent");
+            ps.setString(1, datej);
+            ps.setString(2, datej);
+            ps.setString(3, datej);
+            ResultSet res = ps.executeQuery();
+            while(res.next()) {
+                Agent agent = new Agent(res.getInt("ag_id"), res.getString("ag_nom"), res.getString("ag_numero"), res.getString("ag_adresse"),res.getDouble("ag_uvinitial"), res.getDouble("ag_caisseinitial"));
+                agent.setAg_uv(res.getDouble("ag_uv"));
+                agent.setAg_caisse(res.getDouble("ag_caisse"));
+                agent.setAg_commission(res.getDouble("ag_commission"));
+                liste.add(agent);
+            }
+            ps.close();
+            con.close();
+        } catch (ClassNotFoundException | SQLException e) {
+            System.out.print(e);
         }
-        String datesplit[] = date.split("/");
-        return "20"+datesplit[2]+"-"+datesplit[1]+"-"+datesplit[0];
+        return liste;
     }
 }

@@ -18,6 +18,7 @@ public class Cash_in {
     private String ci_heure;
     private String ci_numero;
     private double ci_montant;
+    private String ci_date;
 
     public Cash_in(int ci_id, int fic_id, String ci_heure, String ci_numero, double ci_montant) {
         this.ci_id = ci_id;
@@ -65,6 +66,14 @@ public class Cash_in {
 
     public void setCi_montant(double ci_montant) {
         this.ci_montant = ci_montant;
+    }
+
+    public String getCi_date() {
+        return ci_date;
+    }
+
+    public void setCi_date(String ci_date) {
+        this.ci_date = ci_date;
     }
     
 }

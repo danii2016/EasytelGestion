@@ -3,13 +3,10 @@
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/beans/ChartView.java
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/filter/NumeroAgentValidator.java
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/util/FonctionUtils.java
-/NetbeansProjects/EasytelGestion/src/main/java/com/easytel/model/LigneTableau.java
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/model/Caisse_journalier.java
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/model/C2c_transfert.java
-/NetbeansProjects/EasytelGestion/src/main/java/com/easytel/model/Fichier.java
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/filter/SimpleNumeroValidator.java
-/NetbeansProjects/EasytelGestion/src/main/java/com/easytel/util/dataConnect.java
-/NetbeansProjects/EasytelGestion/src/main/java/com/easytel/filter/AuthorizationFilter.java
+/NetbeansProjects/EasytelGestion/src/main/java/com/easytel/dao/SuiviDateDAO.java
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/model/Cash_out.java
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/model/Agent.java
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/model/Appro_caisse.java
@@ -19,6 +16,11 @@
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/filter/NomAgentValidator.java
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/model/Cash_in.java
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/beans/FileUploadBean.java
-/NetbeansProjects/EasytelGestion/src/main/java/com/easytel/util/SessionUtils.java
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/dao/LoginDAO.java
+/NetbeansProjects/EasytelGestion/src/main/java/com/easytel/model/LigneTableau.java
+/NetbeansProjects/EasytelGestion/src/main/java/com/easytel/model/Fichier.java
+/NetbeansProjects/EasytelGestion/src/main/java/com/easytel/util/dataConnect.java
+/NetbeansProjects/EasytelGestion/src/main/java/com/easytel/filter/AuthorizationFilter.java
+/NetbeansProjects/EasytelGestion/src/main/java/com/easytel/beans/SuiviParDateBean.java
+/NetbeansProjects/EasytelGestion/src/main/java/com/easytel/util/SessionUtils.java
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/dao/FichierDAO.java

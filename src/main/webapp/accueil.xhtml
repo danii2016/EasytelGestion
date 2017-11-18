@@ -2,15 +2,33 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
 
     <body>
 
         <ui:composition template="./template/Template.xhtml">
 
             <ui:define name="content">
-                <div class="container">
-                    <p:chart type="bar" model="#{chartView.barModel}" style="height:300px"/>
+                <div class="container-fluid">
+                    <h:form>
+                        <div class="container-fluid">
+                            <div class="pull-right">
+                                <p:calendar id="date_jourstat"  value="#{chartView.dateJour}">
+                                    <p:ajax event="dateSelect" process="@form" update="panelStatsContainer" listener="#{chartView.chargeBar()}" />
+                                    <p:ajax event="change" process="@form" update="panelStatsContainer" listener="#{chartView.chargeBar()}" />
+                                </p:calendar>
+                            </div>
+                        </div>
+                        <h:panelGroup id ="panelStatsContainer">
+                            <h:panelGroup id ="panelErrorStats" rendered="#{!chartView.loadBar}">
+                                <div class="alert alert-info">#{chartView.erreurload}</div>
+                            </h:panelGroup>
+                            <h:panelGroup id ="panelStats" rendered="#{chartView.loadBar}">
+                                <p:chart type="bar" model="#{chartView.barModel}" style="height:500px"/>
+                            </h:panelGroup>
+                        </h:panelGroup>
+                    </h:form>
                 </div>
             </ui:define>
 

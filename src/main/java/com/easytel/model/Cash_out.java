@@ -18,6 +18,7 @@ public class Cash_out {
     private String co_heure;
     private String co_numero;
     private double co_montant;
+    private String co_date;
 
     public Cash_out(int co_id, int fic_id, String co_heure, String co_numero, double co_montant) {
         this.co_id = co_id;
@@ -65,5 +66,13 @@ public class Cash_out {
 
     public void setCo_montant(double co_montant) {
         this.co_montant = co_montant;
+    }
+
+    public String getCo_date() {
+        return co_date;
+    }
+
+    public void setCo_date(String co_date) {
+        this.co_date = co_date;
     }
 }

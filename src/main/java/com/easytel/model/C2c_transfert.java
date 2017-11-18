@@ -19,6 +19,7 @@ public class C2c_transfert {
     private String c2c_type;
     private String c2c_numero;
     private double c2c_montant;
+    private String c2c_date;
     
     public C2c_transfert(int c2c_id, int fic_id, String c2c_heure, String c2c_numero, double c2c_montant) {
         this.c2c_id = c2c_id;
@@ -74,5 +75,13 @@ public class C2c_transfert {
 
     public void setC2c_montant(double c2c_montant) {
         this.c2c_montant = c2c_montant;
+    }
+
+    public String getC2c_date() {
+        return c2c_date;
+    }
+
+    public void setC2c_date(String c2c_date) {
+        this.c2c_date = c2c_date;
     }
 }

@@ -1,7 +1,11 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:pe="http://primefaces.org/ui/extensions">
 
     <body>
 
@@ -9,7 +13,162 @@
 
             <ui:define name="content">
                 <div class="container">
-                    content
+                    <h:form id = "formsuividate">
+                        <div class = "form-inline">
+                            <div class = "btn-group">
+                                <p:outputLabel value="Choisir un agent:" for="selectAgent" />
+                                <p:autoComplete id="selectAgent" dropdown="true" value="#{suiviParDateBean.nom_agent}"  completeMethod="#{suiviParDateBean.completeText}"  >
+                                    <p:ajax event="itemSelect" process="@form" update="panelSuiviDate" listener="#{suiviParDateBean.changeAgent}" />
+                                    <p:ajax event="change" process="@form" update="panelSuiviDate" listener="#{suiviParDateBean.changeAgent}" />
+                                </p:autoComplete>
+                            </div>
+                            <div class = "btn-group pull-right">
+                                <p:outputLabel for="date_jourdeb" value="Date :" />
+                                <p:calendar id="date_jourdeb"  value="#{suiviParDateBean.dateJourDebut}"  maxdate="#{suiviParDateBean.dateMax}">
+                                    <p:ajax event="dateSelect" process="@form" update="panelSuiviDate" listener="#{suiviParDateBean.changeAgent}" />
+                                    <p:ajax event="change" process="@form" update="panelSuiviDate" listener="#{suiviParDateBean.changeAgent}" />
+                                </p:calendar>
+                                <span class=""> à </span>
+                                <p:calendar id="date_jourfin"  value="#{suiviParDateBean.dateJourFin}"  maxdate="#{suiviParDateBean.dateMax}">
+                                    <p:ajax event="dateSelect" process="@form" update="panelSuiviDate" listener="#{suiviParDateBean.changeAgent}" />
+                                    <p:ajax event="change" process="@form" update="panelSuiviDate" listener="#{suiviParDateBean.changeAgent}" />
+                                </p:calendar>
+                            </div>
+                        </div>
+                        <div id = "data-journalier">
+                            <h:panelGroup id="panelSuiviDate">
+                                <h:panelGroup id="panelerr" rendered="#{!suiviParDateBean.changed}">
+                                    <div class="alert alert-info">Aucun info à afficher sur les données séléctionnés. Changez la date ou l'Agent.</div>
+                                </h:panelGroup>
+                                <h:panelGroup id="panelInfos" rendered="#{suiviParDateBean.changed}">
+                                    <h3 style="margin-top:10px">Etat de caisse le #{suiviParDateBean.datefrdebut} à #{suiviParDateBean.datefrfin}</h3>
+                                        <p:tabView>
+                                            <p:tab title="Vue d'ensemble">
+                                                <h:panelGrid columns="2" cellpadding="10">
+                                                    <h:outputText value="Caisse initial : " style="font-weight: bold"/>
+                                                    <h:outputText value="#{suiviParDateBean.caisse.cj_caisseinitial}" />
+
+                                                    <h:outputText value="UV Initial : " style="font-weight: bold"/>
+                                                    <h:outputText value="#{suiviParDateBean.caisse.cj_caisseinitial}" />
+
+                                                    <h:outputText value="Commission : " style="font-weight: bold"/>
+                                                    <h:outputText value="#{suiviParDateBean.caisse.cj_commission}" />
+
+                                                    <h:outputText value="Approvissionnement caisse : " style="font-weight: bold"/>
+                                                    <h:outputText value="#{suiviParDateBean.caisse.cj_approcaisse}" />
+
+                                                    <h:outputText value="Dégagement caisse : " style="font-weight: bold"/>
+                                                    <h:outputText value="#{suiviParDateBean.caisse.cj_degagementcaisse}" />
+
+                                                    <h:outputText value="Total transfert : " style="font-weight: bold"/>
+                                                    <h:outputText value="#{suiviParDateBean.caisse.cj_totaltransfert}" />
+
+                                                    <h:outputText value="Total cash in : " style="font-weight: bold"/>
+                                                    <h:outputText value="#{suiviParDateBean.caisse.cj_totalcashin}" />
+
+                                                    <h:outputText value="Total cash out :" style="font-weight: bold"/>
+                                                    <h:outputText value="#{suiviParDateBean.caisse.cj_totalcashout}" />
+
+                                                    <h:outputText value="Caisse final :" style="font-weight: bold"/>
+                                                    <h:outputText value="#{suiviParDateBean.caisse.cj_caissefinal}" />
+
+                                                    <h:outputText value="UV final :" style="font-weight: bold"/>
+                                                    <h:outputText value="#{suiviParDateBean.caisse.cj_uvfinal}" />
+                                                </h:panelGrid>
+                                            </p:tab>
+                                            <p:tab title="Cash In">
+                                                <p:dataTable var="ci" value="#{suiviParDateBean.listeCashIn}"
+                                                             rows="25"
+                                                            paginator="true"
+                                                            paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                            rowsPerPageTemplate="10,25,50,100,500">
+                                                    <p:column headerText="Date" sortBy="#{ci.ci_date}">
+                                                        <h:outputText value="#{ci.ci_date}" />
+                                                    </p:column>
+
+                                                    <p:column headerText="Heure">
+                                                        <h:outputText value="#{ci.ci_heure}" />
+                                                    </p:column>
+
+                                                    <p:column headerText="Numéro client" sortBy="#{ci.ci_numero}">
+                                                        <h:outputText value="#{ci.ci_numero}" />
+                                                    </p:column>
+
+                                                    <p:column headerText="Montant" sortBy='#{ci.ci_montant.replaceAll("\\.00$", "").replaceAll("\\.", "")}'>
+                                                        <h:outputText value="#{ci.ci_montant}" />
+                                                    </p:column>
+                                                </p:dataTable>
+                                            </p:tab>
+                                            <p:tab title="Cash Out">
+                                                <p:dataTable var="co" value="#{suiviParDateBean.listeCashOut}"
+                                                             rows="25"
+                                                            paginator="true"
+                                                            paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                            rowsPerPageTemplate="10,25,50,100,500">
+                                                    <p:column headerText="Date">
+                                                        <h:outputText value="#{co.co_date}" />
+                                                    </p:column>
+
+                                                    <p:column headerText="Heure">
+                                                        <h:outputText value="#{co.co_heure}" />
+                                                    </p:column>
+
+                                                    <p:column headerText="Numéro client">
+                                                        <h:outputText value="#{co.co_numero}" />
+                                                    </p:column>
+
+                                                    <p:column headerText="Montant">
+                                                        <h:outputText value="#{co.co_montant}" />
+                                                    </p:column>
+                                                </p:dataTable>
+                                            </p:tab>
+                                            <p:tab title="C2C Transfer">
+                                                <p:dataTable var="c2c" value="#{suiviParDateBean.listeTransfert}"
+                                                             rows="25"
+                                                            paginator="true"
+                                                            paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                            rowsPerPageTemplate="10,25,50,100,500">
+                                                    <p:column headerText="Date">
+                                                        <h:outputText value="#{c2c.c2c_date}" />
+                                                    </p:column>
+
+                                                    <p:column headerText="Heure">
+                                                        <h:outputText value="#{c2c.c2c_heure}" />
+                                                    </p:column>
+
+                                                    <p:column headerText="Numéro d'origine">
+                                                        <h:outputText value="#{c2c.c2c_numero}" />
+                                                    </p:column>
+
+                                                    <p:column headerText="Montant">
+                                                        <h:outputText value="#{c2c.c2c_montant}" />
+                                                    </p:column>
+                                                </p:dataTable>
+                                            </p:tab>
+                                            <p:tab title="Appro caisse">
+                                                <p:dataTable id ="appro_caisses" var="ap" value="#{suiviParDateBean.listeApproCaisse}"
+                                                             rows="25"
+                                                            paginator="true"
+                                                            paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                            rowsPerPageTemplate="10,25,50,100,500">
+                                                    <p:column headerText="Date">
+                                                        <h:outputText value="#{ap.apc_date}" />
+                                                    </p:column>
+
+                                                    <p:column headerText="Heure">
+                                                        <h:outputText value="#{ap.apc_heure}" />
+                                                    </p:column>
+
+                                                    <p:column headerText="Montant">
+                                                        <h:outputText value="#{ap.apc_montant}" />
+                                                    </p:column>
+                                                </p:dataTable>
+                                            </p:tab>
+                                        </p:tabView>
+                                </h:panelGroup>
+                            </h:panelGroup>
+                        </div>
+                    </h:form>
                 </div>
             </ui:define>
 

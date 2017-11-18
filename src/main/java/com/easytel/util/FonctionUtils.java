@@ -38,4 +38,35 @@ public class FonctionUtils {
         }
         return res;
     }
+    
+    public static String getSQLDateFromDateShort(String date) {
+        if(date == null) {
+            return "";
+        }
+        String datesplit[] = date.split("/");
+        return "20"+datesplit[2]+"-"+datesplit[1]+"-"+datesplit[0];
+    }
+    
+    
+    public static String convertToSql(String date) {
+        String tabsplit[] = date.split(" ");
+        if(tabsplit.length == 2) {
+            String datesplit[] = tabsplit[0].split("/");
+            return datesplit[2]+"-"+datesplit[1]+"-"+datesplit[0]+" "+tabsplit[1];
+        } else {
+            String datesplit[] = tabsplit[0].split("/");
+            return datesplit[2]+"-"+datesplit[1]+"-"+datesplit[0];
+        }
+    }
+    
+    public static String reverseSqlDate(String date) {
+        String tabsplit[] = date.split(" ");
+        if(tabsplit.length == 2) {
+            String datesplit[] = tabsplit[0].split("-");
+            return datesplit[2]+"/"+datesplit[1]+"/"+datesplit[0]+" "+tabsplit[1];
+        } else {
+            String datesplit[] = tabsplit[0].split("-");
+            return datesplit[2]+"/"+datesplit[1]+"/"+datesplit[0];
+        }
+    }
 }

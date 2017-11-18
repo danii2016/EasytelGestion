@@ -16,6 +16,9 @@ public class Agent {
     private String ag_adresse;
     private double ag_uvinitial;
     private double ag_caisseinitial;
+    private double ag_uv;
+    private double ag_caisse;
+    private double ag_commission;
 
     public Agent() {
         this.ag_id = 0;
@@ -68,6 +71,30 @@ public class Agent {
 
     public void setAg_caisseinitial(double ag_caisseinitial) {
         this.ag_caisseinitial = ag_caisseinitial;
+    }
+
+    public double getAg_uv() {
+        return ag_uv;
+    }
+
+    public void setAg_uv(double ag_uv) {
+        this.ag_uv = ag_uv;
+    }
+
+    public double getAg_caisse() {
+        return ag_caisse;
+    }
+
+    public void setAg_caisse(double ag_caisse) {
+        this.ag_caisse = ag_caisse;
+    }
+
+    public double getAg_commission() {
+        return ag_commission;
+    }
+
+    public void setAg_commission(double ag_commission) {
+        this.ag_commission = ag_commission;
     }
     
     public Agent(int id, String nom, String numero, String adresse, double uv, double caisse) {

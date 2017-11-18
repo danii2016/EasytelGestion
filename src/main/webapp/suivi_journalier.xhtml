@@ -33,7 +33,7 @@
                         <div id = "data-journalier">
                             <h:panelGroup id="panelSuiviJournalier">
                                 <h:panelGroup id="panelerr" rendered="#{!suiviJournalierBean.changed}">
-                                    <div class="alert alert-info">Aucun info à afficher sur les données séléctionnés. Changez la date ou l'Agent.</div>
+                                    <div class="alert alert-info">Aucun info à afficher sur les données séléctionnés. Changez lesd date ou l'Agent.</div>
                                 </h:panelGroup>
                                     
                                 <h:panelGroup id="paneldata" rendered="#{suiviJournalierBean.changed}">
@@ -139,7 +139,7 @@
                                             <p:dataTable id ="appro_caisses" var="ap" value="#{suiviJournalierBean.listeApproCaisse}" rowKey="#{ap.apc_id}"
                                                          selection="#{suiviJournalierBean.currAppro}" selectionMode="single">
                                                 <p:ajax event="rowSelect" immediate="true" 
-                                                        listener="#{suiviJournalierBean.approSelect}" oncomplete="$('input.ui-autocomplete-input').trigger('itemSelect')"
+                                                        listener="#{suiviJournalierBean.approSelect}" update="@form"
                                                         />
                                                 <p:column headerText="Date">
                                                     <h:outputText value="#{suiviJournalierBean.datefr}" />

@@ -14,6 +14,7 @@
                 <div class = "container" id = "uploadList">
                     <h:form id="form">
                     <p:dataTable id ="fichiers" var="fic" value="#{fileUploadBean.listeFichier}" rowKey="#{fic.fic_id}" selectionMode="single" selection="#{fileUploadBean.currFichier}"
+                                 rows="20"
                                  paginator="true"
                                 paginatorTemplate=" {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                 rowsPerPageTemplate="10,20,50,100">

@@ -11,6 +11,7 @@ package com.easytel.dao;
  */
 import com.easytel.model.Fichier;
 import com.easytel.model.LigneTableau;
+import com.easytel.util.FonctionUtils;
 import com.easytel.util.SessionUtils;
 import com.easytel.util.dataConnect;
 import java.io.File;
@@ -31,7 +32,7 @@ public class FichierDAO {
             PreparedStatement ps = con.prepareStatement("Select fichier.*, ag_nom, ag_numero from fichier join agent on agent.ag_id = fichier.ag_id order by fic_dateimport desc");
             ResultSet res = ps.executeQuery();
             while(res.next()) {
-                Fichier fichier = new Fichier(res.getInt("fic_id"), res.getInt("ag_id"), res.getString("fic_debutperiode"), res.getString("ag_nom"), res.getString("ag_numero"), res.getString("fic_nom"), reverseSqlDate(res.getString("fic_date")), reverseSqlDate(res.getString("fic_dateimport")));
+                Fichier fichier = new Fichier(res.getInt("fic_id"), res.getInt("ag_id"), res.getString("fic_debutperiode"), res.getString("ag_nom"), res.getString("ag_numero"), res.getString("fic_nom"), FonctionUtils.reverseSqlDate(res.getString("fic_date")), FonctionUtils.reverseSqlDate(res.getString("fic_dateimport")));
                 liste.add(fichier);
             }
             ps.close();
@@ -59,7 +60,7 @@ public class FichierDAO {
             res.close();
             ps.close();
             ps = con.prepareStatement("Select * from fichier join agent on agent.ag_id = fichier.ag_id where fic_date = ? and ag_numero = ?");
-            ps.setString(1, convertToSql(datefic));
+            ps.setString(1, FonctionUtils.convertToSql(datefic));
             ps.setString(2, numero);
             res = ps.executeQuery();
             if(res.next()) {
@@ -105,10 +106,10 @@ public class FichierDAO {
                 String numeroagent = lignes.get(8).getVal4();
                 ps = con.prepareStatement("insert into fichier(ag_id, fic_debutperiode, fic_finperiode, fic_nom, fic_date, fic_dateimport) values(?, ?, ?, ?, ?, now())", Statement.RETURN_GENERATED_KEYS);
                 ps.setInt(1, (int) session.getAttribute("id_agent"));
-                ps.setString(2, convertToSql(lignes.get(2).getVal4()));
-                ps.setString(3, convertToSql(lignes.get(3).getVal4()));
+                ps.setString(2, FonctionUtils.convertToSql(lignes.get(2).getVal4()));
+                ps.setString(3, FonctionUtils.convertToSql(lignes.get(3).getVal4()));
                 ps.setString(4, (String) session.getAttribute("fichier"));
-                ps.setString(5, convertToSql(lignes.get(5).getVal4()));
+                ps.setString(5, FonctionUtils.convertToSql(lignes.get(5).getVal4()));
                 int affectedRows = ps.executeUpdate();
                 if(affectedRows != 0) {
                     res = ps.getGeneratedKeys();
@@ -240,7 +241,7 @@ public class FichierDAO {
                     }
                 }
                 if(saved) {
-                    String datejour = convertToSql(lignes.get(3).getVal4());
+                    String datejour = FonctionUtils.convertToSql(lignes.get(3).getVal4());
                     ps = con.prepareStatement("select * from caisse_journalier where ag_id = ? and cj_date = ?");
                     ps.setInt(1, (int) session.getAttribute("id_agent"));
                     ps.setString(2, datejour);
@@ -440,26 +441,5 @@ public class FichierDAO {
         }
         return saved;
     }
-    
-    private static String convertToSql(String date) {
-        String tabsplit[] = date.split(" ");
-        if(tabsplit.length == 2) {
-            String datesplit[] = tabsplit[0].split("/");
-            return datesplit[2]+"-"+datesplit[1]+"-"+datesplit[0]+" "+tabsplit[1];
-        } else {
-            String datesplit[] = tabsplit[0].split("/");
-            return datesplit[2]+"-"+datesplit[1]+"-"+datesplit[0];
-        }
-    }
-    
-    private static String reverseSqlDate(String date) {
-        String tabsplit[] = date.split(" ");
-        if(tabsplit.length == 2) {
-            String datesplit[] = tabsplit[0].split("-");
-            return datesplit[2]+"/"+datesplit[1]+"/"+datesplit[0]+" "+tabsplit[1];
-        } else {
-            String datesplit[] = tabsplit[0].split("/");
-            return datesplit[2]+"/"+datesplit[1]+"/"+datesplit[0];
-        }
-    }
 }
+
