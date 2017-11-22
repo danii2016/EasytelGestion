@@ -16,12 +16,12 @@
 		<h3>Authentification</h3>
                 <h:messages class="alert alert-danger" />
 		<h:outputText value="Nom d'utilisateur" class ="col-md-6" />
-		<h:inputText id="username" class ="col-md-6" value="#{userBean.user}"></h:inputText>
+                <h:inputText id="username" class ="col-md-6" value="#{userBean.utilisateur.usr_login}"></h:inputText>
 		<h:message for="username"></h:message>
 		<br></br><br></br>
 		
 		<h:outputText value="Mot de passe" class ="col-md-6" />
-		<h:inputSecret id="password" class ="col-md-6" value="#{userBean.pwd}"></h:inputSecret>
+                <h:inputSecret id="password" class ="col-md-6" value="#{userBean.utilisateur.usr_pass}"></h:inputSecret>
 		<h:message for="password"></h:message>
 		<br></br><br></br>
 		

@@ -2,6 +2,7 @@ com/easytel/filter/AuthorizationFilter.class
 com/easytel/beans/SuiviParDateBean.class
 com/easytel/beans/AgentBean.class
 com/easytel/filter/SimpleNumeroValidator.class
+com/easytel/model/User.class
 com/easytel/beans/SuiviJournalierBean.class
 com/easytel/dao/AgentDAO.class
 com/easytel/model/C2c_transfert.class

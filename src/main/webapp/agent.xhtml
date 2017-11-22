@@ -113,54 +113,54 @@
                    
                 </div>            
                 <p:dialog header="Ajouter agent" widgetVar="dlg2" modal="true" width="500" height="300">
-                            <h:form id = "form_ajout">
-                                <p:messages id="msgs" autoUpdate="true" closable="true"/>
-                                <div id = "content-add-agent">
-                                <p:panelGrid columns="3">
-                                    <p:outputLabel class="" for="inputNom" value="Nom" />
-                                    <p:inputText id="inputNom" class="" value = "#{agentBean.nom_agent}" required="true" >
-                                        <f:validator validatorId="com.easytel.filter.NomAgentValidator" />
-                                        <p:ajax update="msgNom" event="blur" />
-                                    </p:inputText>
-                                    <p:message for="inputNom" id="msgNom" display="icon" />
-                                
-                                    <p:outputLabel class="" for="inputAdresse" value="Adresse" />
-                                    <p:inputText id="inputAdresse" class="" value = "#{agentBean.adresse_agent}" required="false" />
-                                    <p:message for="inputAdresse" id="msgAdresse" display="icon" />
-                                
-                                    <p:outputLabel class="" for="inputNumero" value="Numéro" />
-                                    <p:inputText id="inputNumero" class="" placeholder ="0320011122" value="#{agentBean.numero_agent}" required="true" >
-                                        <f:validator validatorId="com.easytel.filter.NumeroAgentValidator" />
-                                        <p:ajax update="msgNumero" event="blur" />
-                                    </p:inputText>
-                                    <p:message for="inputNumero" id="msgNumero" display="icon" />
-                                    
-                                    <p:outputLabel class="" for="inputUV" value="UV initial" />
-                                    <pe:inputNumber class="" id="inputUV" symbol=" AR" symbolPosition="s" 
-                                                    decimalSeparator="," thousandSeparator="." value = "#{agentBean.uv_agent}" required="true">
-                                        <f:validateLength minimum="6" />
-                                        <p:ajax update="msgUV" event="blur" />
-                                    </pe:inputNumber>
-                                    <p:message for="inputUV" id="msgUV" display="icon" />
-                                
-                                    <p:outputLabel class="" for="inputCaisse" value="Caisse" />
-                                    <pe:inputNumber class="" id="inputCaisse" symbol=" AR" symbolPosition="s" 
-                                                    decimalSeparator="," thousandSeparator="." value="#{agentBean.caisse_agent}" required="true" >
-                                        <f:validateLength minimum="6" />
-                                        <p:ajax update="msgCaisse" event="blur" />
-                                    </pe:inputNumber>
-                                    <p:message for="inputCaisse" id="msgCaisse" display="icon" />
+                    <h:form id = "form_ajout">
+                        <p:messages id="msgs" autoUpdate="true" closable="true"/>
+                        <div id = "content-add-agent">
+                        <p:panelGrid columns="3">
+                            <p:outputLabel class="" for="inputNom" value="Nom" />
+                            <p:inputText id="inputNom" class="" value = "#{agentBean.nom_agent}" required="true" >
+                                <f:validator validatorId="com.easytel.filter.NomAgentValidator" />
+                                <p:ajax update="msgNom" event="blur" />
+                            </p:inputText>
+                            <p:message for="inputNom" id="msgNom" display="icon" />
 
-                                </p:panelGrid>
-                                </div>
-                                <div class="container" style="width: 100%;">
-                                    <div class="btn-group pull-right">
-                                        <button class="btn btn-danger" onclick="PF('dlg2').hide();">Annuler</button>
-                                        <p:commandButton class ="btn btn-primary" value="Enregistrer" update="@form:msgs" actionListener="#{agentBean.addnew}" icon="ui-icon-check" oncomplete="if($('.ui-messages-error-summary').first().html() == '') { PF('dlg2').hide(); window.location.reload(); }" />
-                                    </div>
-                                </div>
-                                </h:form>
-                            </p:dialog> 
+                            <p:outputLabel class="" for="inputAdresse" value="Adresse" />
+                            <p:inputText id="inputAdresse" class="" value = "#{agentBean.adresse_agent}" required="false" />
+                            <p:message for="inputAdresse" id="msgAdresse" display="icon" />
+
+                            <p:outputLabel class="" for="inputNumero" value="Numéro" />
+                            <p:inputText id="inputNumero" class="" placeholder ="0320011122" value="#{agentBean.numero_agent}" required="true" >
+                                <f:validator validatorId="com.easytel.filter.NumeroAgentValidator" />
+                                <p:ajax update="msgNumero" event="blur" />
+                            </p:inputText>
+                            <p:message for="inputNumero" id="msgNumero" display="icon" />
+
+                            <p:outputLabel class="" for="inputUV" value="UV initial" />
+                            <pe:inputNumber class="" id="inputUV" symbol=" AR" symbolPosition="s" 
+                                            decimalSeparator="," thousandSeparator="." value = "#{agentBean.uv_agent}" required="true">
+                                <f:validateLength minimum="6" />
+                                <p:ajax update="msgUV" event="blur" />
+                            </pe:inputNumber>
+                            <p:message for="inputUV" id="msgUV" display="icon" />
+
+                            <p:outputLabel class="" for="inputCaisse" value="Caisse" />
+                            <pe:inputNumber class="" id="inputCaisse" symbol=" AR" symbolPosition="s" 
+                                            decimalSeparator="," thousandSeparator="." value="#{agentBean.caisse_agent}" required="true" >
+                                <f:validateLength minimum="6" />
+                                <p:ajax update="msgCaisse" event="blur" />
+                            </pe:inputNumber>
+                            <p:message for="inputCaisse" id="msgCaisse" display="icon" />
+
+                        </p:panelGrid>
+                        </div>
+                        <div class="container" style="width: 100%;">
+                            <div class="btn-group pull-right">
+                                <button class="btn btn-danger" onclick="PF('dlg2').hide();">Annuler</button>
+                                <p:commandButton class ="btn btn-primary" value="Enregistrer" update="@form:msgs" actionListener="#{agentBean.addnew}" icon="ui-icon-check" oncomplete="if($('.ui-messages-error-summary').first().html() == '') { PF('dlg2').hide(); window.location.reload(); }" />
+                            </div>
+                        </div>
+                    </h:form>
+                </p:dialog> 
             </ui:define>
 
         </ui:composition>

@@ -2,7 +2,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
 
     <h:head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -29,9 +30,16 @@
                         <li class="#{(view.viewId.equals('/suivi_pardate.xhtml')) ? 'active' : '' }"><a href="/EasytelGestion/suivi_pardate.xhtml">Suivi entre deux dates</a></li>
                         <li class="#{(view.viewId.equals('/orange.xhtml')) ? 'active' : '' }"><a href="/EasytelGestion/orange.xhtml">Fichiers oranges</a></li>
                         <li class="#{(view.viewId.equals('/agent.xhtml')) ? 'active' : '' }"><a href="/EasytelGestion/agent.xhtml">Agents</a></li>
+                        <li class="#{(view.viewId.equals('/utilisateur.xhtml')) ? 'active' : '' }" style="display:#{sessionScope.update_usr ? '':'none'}"><a href="/EasytelGestion/utilisateur.xhtml">Utilisateurs</a></li>
                       </ul>
-                      <h:commandLink action = "#{userBean.logout}" value ="Déconnexion" class="btn btn-warning navbar-btn pull-right"></h:commandLink>
-                      
+                       <div class="dropdown pull-right">
+                        <button class="btn btn-warning dropdown-toggle" type="button" data-toggle="dropdown">#{sessionScope.username}
+                        <span class="caret"></span></button>
+                        <ul class="dropdown-menu">
+                            <li><a style="cursor: pointer" onclick="PF('dlgprofil').show();" id = "btn-edit-profil">Profil</a></li>
+                          <li><h:commandLink action = "#{userBean.logout}" value ="Déconnexion" ></h:commandLink></li>
+                        </ul>
+                      </div> 
                     </div>
                   </nav> 
                 </h:form>
@@ -43,6 +51,43 @@
         </div>
 
         <div id="bottom">
+            <p:dialog header="Modifier vos données d'authentification" widgetVar="dlgprofil" modal="true" width="500" height="300">
+                <h:form id = "form_profil" onsubmit="handle_formprofilsubmit(e)">
+                    <p:messages id="msgs" autoUpdate="true" closable="true"/>
+                    <div class="alert alert-danger" id ="erreur-profil" style="display: none"></div>
+                    <div id = "content-gerer-degagement">
+                        <p:panelGrid columns="3">
+
+                            <h:outputText value="Nom d'utilisateur" />
+                            <h:inputText id="username" value="#{userBean.utilisateur.usr_login}" required="true"></h:inputText>
+                            <h:message for="username"></h:message>
+                            
+                            <h:outputText value="Alias" />
+                            <h:inputText id="useralias" value="#{userBean.utilisateur.usr_alias}"></h:inputText>
+                            <h:message for="username"></h:message>
+
+                            <h:outputText value="Mot de passe" />
+                            <h:inputSecret id="password" value="#{userBean.utilisateur.usr_pass}"></h:inputSecret>
+                            <h:message for="password"></h:message>
+
+                            <h:outputText value="Nouveau mot de passe" />
+                            <h:inputSecret id="passwordnew" value="#{userBean.utilisateur.usr_newpass}"></h:inputSecret>
+                            <h:message for="passwordnew"></h:message>
+                            
+                            <h:outputText value="Confirmer mot de passe" />
+                            <h:inputSecret id="passwordconfirm" value="#{userBean.utilisateur.usr_confirmpass}"></h:inputSecret>
+                            <h:message for="passwordconfirm"></h:message>
+
+                        </p:panelGrid>
+                    </div>
+                    <div class="container" style="position: absolute;bottom: 10px;right: 10px;">
+                        <div class="btn-group pull-right">
+                            <button class="btn btn-danger" onclick="PF('dlgprofil').hide();">Fermer</button>
+                            <p:commandButton class ="btn btn-primary" value="Enregistrer" update="@form:msgs" actionListener="#{userBean.saveCurrentData()}" icon="ui-icon-check" />
+                        </div>
+                    </div>
+                </h:form>
+            </p:dialog>
             <ui:insert name="bottom">
                 <h:outputScript library="js" name="bootstrap.js" />
                 <h:outputScript library="js" name="script.admin.js" />

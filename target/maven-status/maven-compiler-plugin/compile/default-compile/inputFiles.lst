@@ -19,6 +19,7 @@
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/dao/LoginDAO.java
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/model/LigneTableau.java
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/model/Fichier.java
+/NetbeansProjects/EasytelGestion/src/main/java/com/easytel/model/User.java
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/util/dataConnect.java
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/filter/AuthorizationFilter.java
 /NetbeansProjects/EasytelGestion/src/main/java/com/easytel/beans/SuiviParDateBean.java
