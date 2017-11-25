@@ -116,17 +116,19 @@ public class ChartView implements Serializable {
     private void createBarModel() {
         barModel = initBarModel();
          
-        barModel.setTitle("Statistiques du jour");
-        barModel.setLegendPosition("ne");
-         
-        Axis xAxis = barModel.getAxis(AxisType.X);
-        xAxis.setLabel("Agents");
-         
-        if(montantmax == 0) montantmax = 1000000;
-        Axis yAxis = barModel.getAxis(AxisType.Y);
-        yAxis.setLabel("Valeur (Ariary)");
-        yAxis.setMin(0);
-        yAxis.setMax(montantmax);
+        if(barModel != null) {
+            barModel.setTitle("Statistiques du jour");
+            barModel.setLegendPosition("ne");
+
+            Axis xAxis = barModel.getAxis(AxisType.X);
+            xAxis.setLabel("Agents");
+
+            if(montantmax == 0) montantmax = 1000000;
+            Axis yAxis = barModel.getAxis(AxisType.Y);
+            yAxis.setLabel("Valeur (Ariary)");
+            yAxis.setMin(0);
+            yAxis.setMax(montantmax);
+        }
     }
  
 }
